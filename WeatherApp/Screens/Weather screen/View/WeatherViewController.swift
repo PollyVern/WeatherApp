@@ -17,10 +17,7 @@ class WeatherViewController: UIViewController {
         presenter.attachView(view: self)
         weatherView = WeatherView(frame: self.view.frame)
         self.view = weatherView
-
     }
-
-
 
 }
 

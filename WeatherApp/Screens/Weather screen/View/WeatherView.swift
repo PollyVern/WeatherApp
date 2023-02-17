@@ -14,9 +14,24 @@ protocol WeatherViewProtocol {
 
 class WeatherView: UIView {
 
-    private var localLabel: UILabel = {
+    private var model: WeatherModel?
+
+    private(set) lazy var localLabel: UILabel = {
         var label = UILabel()
+        label.numberOfLines = 0
+        label.font = UIFont.boldSystemFont(ofSize: 20.0)
         return label
+    }()
+
+    private(set) lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(FullDetailsTableViewCell.self, forCellReuseIdentifier: String(describing: FullDetailsTableViewCell.self))
+        tableView.register(ShortDetailsTableViewCell.self, forCellReuseIdentifier: String(describing: ShortDetailsTableViewCell.self))
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = .red
+        tableView.delegate = self
+        tableView.dataSource = self
+        return tableView
     }()
 
     override init(frame: CGRect) {
@@ -29,17 +44,48 @@ class WeatherView: UIView {
     }
 
     private func setupUI() {
-        self.backgroundColor = .red
+        self.backgroundColor = .white
 
+        // localLabel
         self.addSubview(localLabel)
         localLabel.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview().inset(40)
+            make.top.trailing.equalToSuperview().inset(70)
+            make.leading.equalToSuperview().inset(20)
         }
-//        print("?? model?.country \(model?.country)")
+        localLabel.layoutIfNeeded()
+
+        // tableView
+        self.addSubview(tableView)
+        tableView.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo(localLabel.snp.bottom)
+        }
     }
 
     func setData(model: WeatherModel) {
-        localLabel.text = model.country
+        self.model = model
+        localLabel.text = "\(model.province.uppercased()), \n\(model.country)"
+
     }
+
+}
+
+extension WeatherView: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        2
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.row == 0 {
+            let fullCell = tableView.dequeueReusableCell(withIdentifier: String(describing: FullDetailsTableViewCell.self), for: indexPath) as? FullDetailsTableViewCell
+            guard let fullCell = fullCell else { return UITableViewCell()}
+            return fullCell
+        } else {
+            let shortCell = tableView.dequeueReusableCell(withIdentifier: String(describing: ShortDetailsTableViewCell.self), for: indexPath) as? ShortDetailsTableViewCell
+            guard let shortCell = shortCell else { return UITableViewCell()}
+            return shortCell
+        }
+    }
+
 
 }
