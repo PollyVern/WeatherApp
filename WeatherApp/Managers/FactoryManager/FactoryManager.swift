@@ -12,6 +12,7 @@ import CoreLocation
 class FactoryManager {
 
     private var locationManager: CLLocationManager?
+    private var dateFormatterManager: DateFormatterManager?
 
     func makeLocationManager() -> CLLocationManager {
         if let factory = locationManager {
@@ -19,6 +20,16 @@ class FactoryManager {
         } else {
             let factory = CLLocationManager()
             locationManager = factory
+            return factory
+        }
+    }
+
+    func makeDateFormatterManager() -> DateFormatterManager {
+        if let factory = dateFormatterManager {
+            return factory
+        } else {
+            let factory = DateFormatterManager()
+            dateFormatterManager = factory
             return factory
         }
     }

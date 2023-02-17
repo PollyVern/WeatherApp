@@ -10,4 +10,9 @@ import Foundation
 struct WeatherModel {
     var country: String
     var province: String
+    var week: [WeatherWeakModel]
+}
+
+struct WeatherWeakModel {
+    var date: String
 }

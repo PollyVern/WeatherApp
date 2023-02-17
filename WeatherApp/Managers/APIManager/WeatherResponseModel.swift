@@ -9,9 +9,11 @@ import Foundation
 
 struct WeatherResponseModel: Codable {
     let geoObject: GeoObject
+    let forecasts: [Forecast]
 
     enum CodingKeys: String, CodingKey {
         case geoObject = "geo_object"
+        case forecasts
     }
 }
 
@@ -23,4 +25,14 @@ struct GeoObject: Codable {
 // MARK: - Country
 struct Country: Codable {
     let name: String
+}
+
+// MARK: - Forecast
+struct Forecast: Codable {
+    let date: String
+
+    enum CodingKeys: String, CodingKey {
+        case date
+
+    }
 }

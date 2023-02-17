@@ -69,7 +69,13 @@ class WeatherPresenter {
                 return
             }
             print("?? получили модель \(model.geoObject.country.name)")
-            self.weatherView?.setModel(model: WeatherModel(country: model.geoObject.country.name, province: model.geoObject.province.name))
+            var weatherWeakModel = [WeatherWeakModel]()
+            model.forecasts.forEach { element in
+                weatherWeakModel.append(WeatherWeakModel(date: element.date))
+            }
+            self.weatherView?.setModel(model: WeatherModel(country: model.geoObject.country.name,
+                                                           province: model.geoObject.province.name,
+                                                           week: weatherWeakModel))
         })
 
     }

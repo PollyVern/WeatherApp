@@ -26,7 +26,6 @@ class WeatherView: UIView {
     private(set) lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(FullDetailsTableViewCell.self, forCellReuseIdentifier: String(describing: FullDetailsTableViewCell.self))
-        tableView.register(ShortDetailsTableViewCell.self, forCellReuseIdentifier: String(describing: ShortDetailsTableViewCell.self))
         tableView.separatorStyle = .none
         tableView.backgroundColor = .red
         tableView.delegate = self
@@ -58,13 +57,14 @@ class WeatherView: UIView {
         self.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
-            make.top.equalTo(localLabel.snp.bottom)
+            make.top.equalTo(localLabel.snp.bottom).offset(20)
         }
     }
 
     func setData(model: WeatherModel) {
         self.model = model
         localLabel.text = "\(model.province.uppercased()), \n\(model.country)"
+        tableView.reloadData()
 
     }
 
@@ -72,20 +72,17 @@ class WeatherView: UIView {
 
 extension WeatherView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        2
+        1
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row == 0 {
-            let fullCell = tableView.dequeueReusableCell(withIdentifier: String(describing: FullDetailsTableViewCell.self), for: indexPath) as? FullDetailsTableViewCell
-            guard let fullCell = fullCell else { return UITableViewCell()}
-            return fullCell
-        } else {
-            let shortCell = tableView.dequeueReusableCell(withIdentifier: String(describing: ShortDetailsTableViewCell.self), for: indexPath) as? ShortDetailsTableViewCell
-            guard let shortCell = shortCell else { return UITableViewCell()}
-            return shortCell
+        let fullCell = tableView.dequeueReusableCell(withIdentifier: String(describing: FullDetailsTableViewCell.self), for: indexPath) as? FullDetailsTableViewCell
+        guard let fullCell = fullCell else { return UITableViewCell()}
+        if let model = self.model {
+            fullCell.setData(model: model)
+            
         }
+        return fullCell
     }
-
 
 }
