@@ -7,37 +7,20 @@
 
 import Foundation
 
-// MARK: - Welcome
 struct WeatherResponseModel: Codable {
-    let now: Int
-    let nowDt: String
-    let info: Info
+    let geoObject: GeoObject
 
     enum CodingKeys: String, CodingKey {
-        case now
-        case nowDt = "now_dt"
-        case info
+        case geoObject = "geo_object"
     }
 }
 
-// MARK: - Info
-struct Info: Codable {
-    let lat, lon: Double
-    let tzinfo: Tzinfo
-    let defPressureMm, defPressurePa: Int
-    let url: String
-
-    enum CodingKeys: String, CodingKey {
-        case lat, lon, tzinfo
-        case defPressureMm = "def_pressure_mm"
-        case defPressurePa = "def_pressure_pa"
-        case url
-    }
+// MARK: - GeoObject
+struct GeoObject: Codable {
+    let province, country: Country
 }
 
-// MARK: - Tzinfo
-struct Tzinfo: Codable {
-    let offset: Int
-    let name, abbr: String
-    let dst: Bool
+// MARK: - Country
+struct Country: Codable {
+    let name: String
 }

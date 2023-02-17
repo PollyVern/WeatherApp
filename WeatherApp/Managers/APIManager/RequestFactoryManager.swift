@@ -23,7 +23,7 @@ class RequestFactoryManager {
         if let weatherRequestFactory = weatherRequestFactory {
             return weatherRequestFactory
         } else {
-            var weatherRequestFactory = WeatherRequestFactory()
+            let weatherRequestFactory = WeatherRequestFactory()
             self.weatherRequestFactory = weatherRequestFactory
             return weatherRequestFactory
         }

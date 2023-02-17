@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DefaultWeatherModel {
-    let latitude = "55.7522"
-    let longitude = "37.6156"
+struct WeatherModel {
+    var country: String
+    var province: String
 }

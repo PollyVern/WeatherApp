@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import CoreLocation
 
+
 class WeatherPresenter {
 
     // MARK: - Managers and Factory
@@ -16,15 +17,23 @@ class WeatherPresenter {
     private var weatherRequestFactory: WeatherRequestFactory?
     private let factory = RequestFactoryManager()
 
+    // MARK: - Protocol
+    private var weatherView: WeatherViewProtocol?
+
     // MARK: - Model
     private var defaultWeatherModel = DefaultWeatherModel()
 
     // MARK: - Combine
     private var cancellable = Set<AnyCancellable>()
 
+
     init(locationManager: LocationManager) {
         self.locationManager = locationManager
         setLocationManager()
+    }
+
+    func attachView(view: WeatherViewProtocol) {
+        weatherView = view
     }
 
     private func setLocationManager() {
@@ -44,12 +53,11 @@ class WeatherPresenter {
             .sink { [weak self] isDetermined in
                 guard let self = self,
                       let isDetermined = isDetermined else {
-                          return
-                      }
+                    return
+                }
                 if !isDetermined {
                     self.setWeatherRequest(latitude: self.defaultWeatherModel.latitude, longitude: self.defaultWeatherModel.longitude)
                 }
-
             }
             .store(in: &cancellable)
     }
@@ -57,7 +65,11 @@ class WeatherPresenter {
     private func setWeatherRequest(latitude: String, longitude: String) {
         weatherRequestFactory = factory.makeAuthRequestFactory()
         weatherRequestFactory?.getWeather(latitude: latitude, longitude: longitude, completion: { model, error in
-            print("??? model \(model?.now)")
+            guard let model = model else {
+                return
+            }
+            print("?? получили модель \(model.geoObject.country.name)")
+            self.weatherView?.setModel(model: WeatherModel(country: model.geoObject.country.name, province: model.geoObject.province.name))
         })
 
     }
