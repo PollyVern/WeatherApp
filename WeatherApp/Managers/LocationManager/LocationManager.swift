@@ -16,6 +16,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 
     // MARK: - Properties
     @Published var currentLocation: CLLocation?
+    @Published var isDetermined: Bool?
 
     func setLocationManager() {
         locationManager = factoryManager.makeLocationManager()
@@ -29,15 +30,20 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         switch locationManager.authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
             locationManager.startUpdatingLocation()
+            isDetermined = true
             print("?? authorizedAlways")
         case .denied:
             print("?? denied")
+            isDetermined = false
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
+            isDetermined = nil
             print("?? notDetermined")
         case .restricted:
+            isDetermined = true
             print("?? restricted")
         @unknown default:
+            isDetermined = false
             print("?? default")
         }
 
@@ -49,13 +55,13 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.first else { return }
-        currentLocation = CLLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        manager.stopUpdatingLocation()
+        if currentLocation == nil {
+            currentLocation = CLLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+            manager.stopUpdatingLocation()
+        }
     }
 
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("error:: \(error.localizedDescription)")
-    }
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {}
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == .authorizedWhenInUse {

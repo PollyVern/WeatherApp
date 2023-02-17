@@ -11,11 +11,15 @@ import CoreLocation
 
 class WeatherPresenter {
 
+    // MARK: - Managers and Factory
     private let locationManager: LocationManager
     private var weatherRequestFactory: WeatherRequestFactory?
-
     private let factory = RequestFactoryManager()
 
+    // MARK: - Model
+    private var defaultWeatherModel = DefaultWeatherModel()
+
+    // MARK: - Combine
     private var cancellable = Set<AnyCancellable>()
 
     init(locationManager: LocationManager) {
@@ -28,17 +32,33 @@ class WeatherPresenter {
         locationManager.$currentLocation
             .sink { [weak self] location in
                 guard let self = self,
-                      let location = location else { return }
+                      let location = location else {
+                    return
+                }
+                print("??? есть локации")
+                self.setWeatherRequest(latitude: "\(location.coordinate.latitude)", longitude: "\(location.coordinate.longitude)")
+                
+            }
+            .store(in: &cancellable)
 
-                self.setWeatherRequest(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        locationManager.$isDetermined
+            .sink { [weak self] isDetermined in
+                guard let self = self,
+                      let isDetermined = isDetermined else {
+                          return
+                      }
+                if !isDetermined {
+                    self.setWeatherRequest(latitude: self.defaultWeatherModel.latitude, longitude: self.defaultWeatherModel.longitude)
+                }
+
             }
             .store(in: &cancellable)
     }
 
-    private func setWeatherRequest(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
+    private func setWeatherRequest(latitude: String, longitude: String) {
         print("???  ---")
         weatherRequestFactory = factory.makeAuthRequestFactory()
-        weatherRequestFactory?.getWeather(latitude: "\(latitude)", longitude: "\(longitude)", completion: { model, error in
+        weatherRequestFactory?.getWeather(latitude: latitude, longitude: longitude, completion: { model, error in
             print("??? model \(model?.now)")
         })
 
