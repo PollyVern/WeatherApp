@@ -9,6 +9,7 @@ import UIKit
 
 class WeatherViewController: UIViewController {
 
+    private let presenter = WeatherPresenter(locationManager: LocationManager())
 
     override func viewDidLoad() {
 

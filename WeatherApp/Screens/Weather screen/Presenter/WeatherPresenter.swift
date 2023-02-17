@@ -6,3 +6,18 @@
 //
 
 import Foundation
+
+class WeatherPresenter {
+
+    private let locationManager: LocationManager
+
+    init(locationManager: LocationManager) {
+        self.locationManager = locationManager
+        setLocationManager()
+    }
+
+    func setLocationManager() {
+        locationManager.setLocationManager()
+    }
+
+}
