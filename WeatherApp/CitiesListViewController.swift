@@ -9,4 +9,8 @@ import UIKit
 
 class CitiesListViewController: UIViewController {
 
+
+    override func viewDidLoad() {
+    }
+
 }
