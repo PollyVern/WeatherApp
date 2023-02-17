@@ -12,7 +12,7 @@
 		37890F4A299F8249002FB3AA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37890F49299F8249002FB3AA /* ViewController.swift */; };
 		37890F52299F824B002FB3AA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37890F51299F824B002FB3AA /* Assets.xcassets */; };
 		37890F55299F824B002FB3AA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 37890F53299F824B002FB3AA /* LaunchScreen.storyboard */; };
-		37890F5D299F8408002FB3AA /* CitiesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37890F5C299F8408002FB3AA /* CitiesListViewController.swift */; };
+		37890F5D299F8408002FB3AA /* WeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37890F5C299F8408002FB3AA /* WeatherViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,7 +23,7 @@
 		37890F51299F824B002FB3AA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		37890F54299F824B002FB3AA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		37890F56299F824B002FB3AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		37890F5C299F8408002FB3AA /* CitiesListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitiesListViewController.swift; sourceTree = "<group>"; };
+		37890F5C299F8408002FB3AA /* WeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,7 +62,7 @@
 				37890F49299F8249002FB3AA /* ViewController.swift */,
 				37890F53299F824B002FB3AA /* LaunchScreen.storyboard */,
 				37890F56299F824B002FB3AA /* Info.plist */,
-				37890F5C299F8408002FB3AA /* CitiesListViewController.swift */,
+				37890F5C299F8408002FB3AA /* WeatherViewController.swift */,
 			);
 			path = WeatherApp;
 			sourceTree = "<group>";
@@ -163,7 +163,7 @@
 			files = (
 				37890F4A299F8249002FB3AA /* ViewController.swift in Sources */,
 				37890F46299F8249002FB3AA /* AppDelegate.swift in Sources */,
-				37890F5D299F8408002FB3AA /* CitiesListViewController.swift in Sources */,
+				37890F5D299F8408002FB3AA /* WeatherViewController.swift in Sources */,
 				37890F48299F8249002FB3AA /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

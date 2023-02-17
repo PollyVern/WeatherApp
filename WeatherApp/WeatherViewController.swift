@@ -1,5 +1,5 @@
 //
-//  CitiesListViewController.swift
+//  WeatherViewController.swift
 //  WeatherApp
 //
 //  Created by Polina Belovodskaya on 17.02.2023.
@@ -7,10 +7,11 @@
 
 import UIKit
 
-class CitiesListViewController: UIViewController {
+class WeatherViewController: UIViewController {
 
 
     override func viewDidLoad() {
+
     }
 
 }
