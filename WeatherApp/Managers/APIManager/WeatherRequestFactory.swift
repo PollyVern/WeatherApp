@@ -15,7 +15,9 @@ final class WeatherRequestFactory {
     public func getWeather(latitude: String, longitude: String, completion: @escaping (WeatherResponseModel?, AFError?) -> Void) {
         let parameters: [String : Any] = [
             "lat": latitude,
-            "lon": longitude
+            "lon": longitude,
+            "lang": "ru_RU",
+            "limit": "7"
         ]
 
         let request = WeatherRequestRouter.getWeather(parameters: parameters)
