@@ -10,12 +10,12 @@ import Alamofire
 
 final class WeatherRequestFactory {
 
-    var sessionManager = Session()
+    private var sessionManager = Session()
 
-    public func getWeather(lat: String, lon: String, completion: @escaping (WeatherResponseModel?, AFError?) -> Void) {
+    public func getWeather(latitude: String, longitude: String, completion: @escaping (WeatherResponseModel?, AFError?) -> Void) {
         let parameters: [String : Any] = [
-            "lat": lat,
-            "lon": lon
+            "lat": latitude,
+            "lon": longitude
         ]
 
         let request = WeatherRequestRouter.getWeather(parameters: parameters)

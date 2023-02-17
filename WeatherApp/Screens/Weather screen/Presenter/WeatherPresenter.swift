@@ -38,7 +38,7 @@ class WeatherPresenter {
     private func setWeatherRequest(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
         print("???  ---")
         weatherRequestFactory = factory.makeAuthRequestFactory()
-        weatherRequestFactory?.getWeather(lat: "\(latitude)", lon: "\(longitude)", completion: { model, error in
+        weatherRequestFactory?.getWeather(latitude: "\(latitude)", longitude: "\(longitude)", completion: { model, error in
             print("??? model \(model?.now)")
         })
 
