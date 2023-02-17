@@ -35,7 +35,6 @@ class WeatherPresenter {
                       let location = location else {
                     return
                 }
-                print("??? есть локации")
                 self.setWeatherRequest(latitude: "\(location.coordinate.latitude)", longitude: "\(location.coordinate.longitude)")
                 
             }
@@ -56,7 +55,6 @@ class WeatherPresenter {
     }
 
     private func setWeatherRequest(latitude: String, longitude: String) {
-        print("???  ---")
         weatherRequestFactory = factory.makeAuthRequestFactory()
         weatherRequestFactory?.getWeather(latitude: latitude, longitude: longitude, completion: { model, error in
             print("??? model \(model?.now)")
