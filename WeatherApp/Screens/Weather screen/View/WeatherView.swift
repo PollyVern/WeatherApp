@@ -8,10 +8,6 @@
 import UIKit
 import SnapKit
 
-protocol WeatherViewProtocol {
-    func setModel(model: WeatherModel)
-}
-
 class WeatherView: UIView {
 
     // MARK: - Model
@@ -44,7 +40,6 @@ class WeatherView: UIView {
         label.textColor = .white
         return label
     }()
-    
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -57,7 +52,6 @@ class WeatherView: UIView {
 
     private func setupUI() {
         self.backgroundColor = UIColor.backgroundColor
-
         // localLabel
         self.addSubview(localLabel)
         localLabel.snp.makeConstraints { make in
@@ -93,7 +87,5 @@ class WeatherView: UIView {
         dateFormatterManager = factoryManager.makeDateFormatterManager()
         guard let dateFormatterManager = dateFormatterManager else { return }
         dateLabel.text = dateFormatterManager.refactorDate(date: model.week[0].date)
-
     }
-
 }

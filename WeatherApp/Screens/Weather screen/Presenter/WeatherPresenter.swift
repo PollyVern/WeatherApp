@@ -9,6 +9,10 @@ import Foundation
 import Combine
 import CoreLocation
 
+protocol WeatherViewProtocol {
+    func setModel(model: WeatherModel)
+    func hideIndicator()
+}
 
 class WeatherPresenter {
 
@@ -22,10 +26,12 @@ class WeatherPresenter {
 
     // MARK: - Model
     private var defaultWeatherModel = DefaultWeatherModel()
+    private var weatherModel: WeatherModel?
 
     // MARK: - Combine
     private var cancellable = Set<AnyCancellable>()
 
+    let dispatchGroup = DispatchGroup()
 
     init(locationManager: LocationManager) {
         self.locationManager = locationManager
@@ -34,6 +40,10 @@ class WeatherPresenter {
 
     func attachView(view: WeatherViewProtocol) {
         weatherView = view
+    }
+
+    func detachView() {
+        weatherView = nil
     }
 
     private func setLocationManager() {
@@ -64,19 +74,29 @@ class WeatherPresenter {
 
     private func setWeatherRequest(latitude: String, longitude: String) {
         weatherRequestFactory = factory.makeAuthRequestFactory()
+        dispatchGroup.enter()
         weatherRequestFactory?.getWeather(latitude: latitude, longitude: longitude, completion: { model, error in
             guard let model = model else {
                 return
             }
             var weatherWeakModel = [WeatherWeakModel]()
+
             model.forecasts.forEach { element in
                 weatherWeakModel.append(WeatherWeakModel(date: element.date))
             }
-            self.weatherView?.setModel(model: WeatherModel(country: model.geoObject.country.name,
-                                                           province: model.geoObject.province.name,
-                                                           week: weatherWeakModel))
+
+            self.weatherModel = WeatherModel(country: model.geoObject.country.name,
+                                        province: model.geoObject.province.name,
+                                        week: weatherWeakModel)
+
+            self.dispatchGroup.leave()
         })
 
+        self.dispatchGroup.notify(queue: .main) {
+            guard let weatherModel = self.weatherModel else { return }
+            self.weatherView?.hideIndicator()
+            self.weatherView?.setModel(model: weatherModel)
+        }
     }
 
 }
