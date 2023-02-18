@@ -15,4 +15,5 @@ struct WeatherModel {
 
 struct WeatherWeakModel {
     var date: String
+    var temp_avg: Int
 }

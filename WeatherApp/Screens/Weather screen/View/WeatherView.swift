@@ -41,6 +41,14 @@ class WeatherView: UIView {
         return label
     }()
 
+    private(set) lazy var tempLabel: UILabel = {
+        var label = UILabel()
+        label.numberOfLines = 1
+        label.font = UIFont.boldSystemFont(ofSize: 80)
+        label.textColor = .white
+        return label
+    }()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -52,6 +60,7 @@ class WeatherView: UIView {
 
     private func setupUI() {
         self.backgroundColor = UIColor.backgroundColor
+
         // localLabel
         self.addSubview(localLabel)
         localLabel.snp.makeConstraints { make in
@@ -78,6 +87,12 @@ class WeatherView: UIView {
             make.centerX.equalToSuperview()
             make.top.equalToSuperview().inset(20)
         }
+
+        // tempLabel
+        blueRectangleView.addSubview(tempLabel)
+        tempLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
     }
 
     func setData(model: WeatherModel) {
@@ -87,5 +102,7 @@ class WeatherView: UIView {
         dateFormatterManager = factoryManager.makeDateFormatterManager()
         guard let dateFormatterManager = dateFormatterManager else { return }
         dateLabel.text = dateFormatterManager.refactorDate(date: model.week[0].date)
+
+        tempLabel.text = "\(model.week[0].temp_avg) °C"
     }
 }

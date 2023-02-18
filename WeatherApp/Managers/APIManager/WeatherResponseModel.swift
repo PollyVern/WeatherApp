@@ -30,9 +30,27 @@ struct Country: Codable {
 // MARK: - Forecast
 struct Forecast: Codable {
     let date: String
+    let parts: Parts
 
     enum CodingKeys: String, CodingKey {
-        case date
+        case date, parts
+    }
+}
 
+// MARK: - Parts
+struct Parts: Codable {
+    let morning: Morning
+
+    enum CodingKeys: String, CodingKey {
+        case morning
+    }
+}
+
+// MARK: - Morning
+struct Morning: Codable {
+    let temp_avg: Int
+
+    enum CodingKeys: String, CodingKey {
+        case temp_avg
     }
 }
