@@ -49,8 +49,9 @@ struct Parts: Codable {
 // MARK: - Morning
 struct Morning: Codable {
     let temp_avg: Int
+    let feels_like: Int
 
     enum CodingKeys: String, CodingKey {
-        case temp_avg
+        case temp_avg, feels_like
     }
 }

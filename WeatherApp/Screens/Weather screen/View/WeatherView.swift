@@ -49,6 +49,15 @@ class WeatherView: UIView {
         return label
     }()
 
+    private(set) lazy var tempFeelsLabel: UILabel = {
+        var label = UILabel()
+        label.numberOfLines = 0
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.textColor = .white
+        label.textAlignment = .center
+        return label
+    }()
+
     lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: CollectionViewLayout().createCollectionViewLayout(leading: 20, trailing: 20, height: 200, width: UIScreen.main.bounds.width/3, spacing: 8))
         collectionView.register(SmallerWeatherCollectionViewCell.self, forCellWithReuseIdentifier: String(describing: SmallerWeatherCollectionViewCell.self))
@@ -101,6 +110,14 @@ class WeatherView: UIView {
             make.center.equalToSuperview()
         }
 
+        // tempFeelsLabel
+        blueRectangleView.addSubview(tempFeelsLabel)
+        tempFeelsLabel.snp.makeConstraints { make in
+            make.top.equalTo(tempLabel.snp.bottom).offset(10)
+            make.leading.equalToSuperview().offset(20)
+            make.trailing.equalToSuperview().inset(20)
+        }
+
         // collection
         self.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
@@ -120,6 +137,8 @@ class WeatherView: UIView {
         dateLabel.text = dateFormatterManager.refactorDate(date: model.week[0].date)
 
         tempLabel.text = "\(model.week[0].temp_avg) °C"
+
+        tempFeelsLabel.text = "Ощущаемая температура \(model.week[0].feels_like) °C"
             
     }
 }

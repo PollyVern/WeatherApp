@@ -83,7 +83,8 @@ class WeatherPresenter {
 
             model.forecasts.forEach { element in
                 weatherWeakModel.append(WeatherWeakModel(date: element.date,
-                                                         temp_avg: element.parts.morning.temp_avg))
+                                                         temp_avg: element.parts.morning.temp_avg,
+                                                         feels_like: element.parts.morning.feels_like))
             }
             self.weatherModel = WeatherModel(country: model.geoObject.country.name,
                                              province: model.geoObject.province.name,
