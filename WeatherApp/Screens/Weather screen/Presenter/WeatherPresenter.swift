@@ -68,7 +68,6 @@ class WeatherPresenter {
             guard let model = model else {
                 return
             }
-            print("?? получили модель \(model.geoObject.country.name)")
             var weatherWeakModel = [WeatherWeakModel]()
             model.forecasts.forEach { element in
                 weatherWeakModel.append(WeatherWeakModel(date: element.date))

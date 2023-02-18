@@ -15,6 +15,7 @@ final class DateFormatterManager {
         dateFormatterGet.dateFormat = "yyyy-mm-dd"
 
         let dateFormatterSet = DateFormatter()
+        dateFormatterSet.locale = Locale(identifier: "RU")
         dateFormatterSet.dateFormat = "dd MMMM yyyy"
 
         if let date = dateFormatterGet.date(from: date) {

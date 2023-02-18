@@ -14,24 +14,37 @@ protocol WeatherViewProtocol {
 
 class WeatherView: UIView {
 
+    // MARK: - Model
     private var model: WeatherModel?
 
+    // MARK: - Managers
+    private var dateFormatterManager: DateFormatterManager?
+    private let factoryManager = FactoryManager()
+
+    // MARK: - UI
     private(set) lazy var localLabel: UILabel = {
         var label = UILabel()
         label.numberOfLines = 0
         label.font = UIFont.boldSystemFont(ofSize: 20.0)
+        label.textColor = UIColor.textColor
         return label
     }()
 
-    private(set) lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.register(FullDetailsTableViewCell.self, forCellReuseIdentifier: String(describing: FullDetailsTableViewCell.self))
-        tableView.separatorStyle = .none
-        tableView.backgroundColor = .red
-        tableView.delegate = self
-        tableView.dataSource = self
-        return tableView
+    private(set) lazy var blueRectangleView: UIView = {
+        var view = UIView()
+        view.backgroundColor = UIColor.lightBlueColor
+        view.layer.cornerRadius = 30
+        return view
     }()
+
+    private(set) lazy var dateLabel: UILabel = {
+        var label = UILabel()
+        label.numberOfLines = 1
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.textColor = .white
+        return label
+    }()
+    
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,7 +56,7 @@ class WeatherView: UIView {
     }
 
     private func setupUI() {
-        self.backgroundColor = .white
+        self.backgroundColor = UIColor.backgroundColor
 
         // localLabel
         self.addSubview(localLabel)
@@ -53,36 +66,34 @@ class WeatherView: UIView {
         }
         localLabel.layoutIfNeeded()
 
-        // tableView
-        self.addSubview(tableView)
-        tableView.snp.makeConstraints { make in
-            make.leading.trailing.bottom.equalToSuperview()
-            make.top.equalTo(localLabel.snp.bottom).offset(20)
+        // blueRectangleView
+        self.addSubview(blueRectangleView)
+        blueRectangleView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(20)
+            make.trailing.equalToSuperview().inset(20)
+            make.top.equalTo(localLabel.snp.bottom).offset(30)
+        }
+        blueRectangleView.layoutIfNeeded()
+        blueRectangleView.snp.makeConstraints { make in
+            make.height.equalTo(blueRectangleView.snp.width)
+        }
+
+        // dateLabel
+        blueRectangleView.addSubview(dateLabel)
+        dateLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().inset(20)
         }
     }
 
     func setData(model: WeatherModel) {
         self.model = model
         localLabel.text = "\(model.province.uppercased()), \n\(model.country)"
-        tableView.reloadData()
 
-    }
+        dateFormatterManager = factoryManager.makeDateFormatterManager()
+        guard let dateFormatterManager = dateFormatterManager else { return }
+        dateLabel.text = dateFormatterManager.refactorDate(date: model.week[0].date)
 
-}
-
-extension WeatherView: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let fullCell = tableView.dequeueReusableCell(withIdentifier: String(describing: FullDetailsTableViewCell.self), for: indexPath) as? FullDetailsTableViewCell
-        guard let fullCell = fullCell else { return UITableViewCell()}
-        if let model = self.model {
-            fullCell.setData(model: model)
-            
-        }
-        return fullCell
     }
 
 }
