@@ -17,7 +17,7 @@ class WeatherViewController: UIViewController {
         activityIndicator.center = self.view.center
         activityIndicator.style = .large
         activityIndicator.isHidden = false
-        activityIndicator.color = UIColor.gray
+        activityIndicator.color = .gray
         return activityIndicator
     }()
 
@@ -28,7 +28,7 @@ class WeatherViewController: UIViewController {
     }
 
     private func setupUI() {
-        view.backgroundColor = UIColor.backgroundColor
+        view.backgroundColor = .backgroundColor
 
         // weatherView
         weatherView = WeatherView(frame: self.view.frame)

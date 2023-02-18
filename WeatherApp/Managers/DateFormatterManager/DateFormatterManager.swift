@@ -24,4 +24,20 @@ final class DateFormatterManager {
             return nil
         }
     }
+
+    func refactorDateWithoutYear(date: String) -> String? {
+
+        let dateFormatterGet = DateFormatter()
+        dateFormatterGet.dateFormat = "yyyy-mm-dd"
+
+        let dateFormatterSet = DateFormatter()
+        dateFormatterSet.locale = Locale(identifier: "RU")
+        dateFormatterSet.dateFormat = "dd MMMM"
+
+        if let date = dateFormatterGet.date(from: date) {
+            return dateFormatterSet.string(from: date)
+        } else {
+            return nil
+        }
+    }
 }
