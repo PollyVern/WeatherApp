@@ -128,17 +128,17 @@ class WeatherView: UIView {
         }
     }
 
-    func setData(model: WeatherModel) {
+    func setData(model: WeatherModel, index: Int) {
         self.model = model
         localLabel.text = "\(model.province.uppercased()), \n\(model.country)"
 
         dateFormatterManager = factoryManager.makeDateFormatterManager()
         guard let dateFormatterManager = dateFormatterManager else { return }
-        dateLabel.text = dateFormatterManager.refactorDate(date: model.week[0].date)
+        dateLabel.text = dateFormatterManager.refactorDate(date: model.week[index].date)
 
-        tempLabel.text = "\(model.week[0].temp_avg) °C"
+        tempLabel.text = "\(model.week[index].temp_avg) °C"
 
-        tempFeelsLabel.text = "Ощущаемая температура \(model.week[0].feels_like) °C"
+        tempFeelsLabel.text = "Ощущаемая температура \(model.week[index].feels_like) °C"
             
     }
 }
@@ -159,6 +159,7 @@ extension WeatherView: UICollectionViewDataSource, UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let model = model else { return }
+        setData(model: model, index: indexPath.row)
     }
 
 }
