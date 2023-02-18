@@ -13,7 +13,7 @@ enum WeatherRequestRouter: RequestRouter {
     case getWeather(parameters: Parameters)
 
     var url: URL {
-        return URL.init(string: RequestProperties.baseUrl.rawValue + "/forecast")!
+        return URL.init(string: Constants.baseUrl + "/forecast")!
     }
 
     var method: HTTPMethod {
@@ -26,7 +26,7 @@ enum WeatherRequestRouter: RequestRouter {
     var headers: HTTPHeaders {
         switch self {
         case .getWeather:
-            return ["X-Yandex-API-Key": RequestProperties.keyAPI.rawValue]
+            return ["X-Yandex-API-Key": Constants.keyAPI]
         }
     }
 

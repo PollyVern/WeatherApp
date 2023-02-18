@@ -63,6 +63,7 @@ class SmallerWeatherCollectionViewCell: UICollectionViewCell {
         tempLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
+
     }
 
     func setData(model: WeatherWeakModel) {
@@ -71,6 +72,7 @@ class SmallerWeatherCollectionViewCell: UICollectionViewCell {
         dateLabel.text = dateFormatterManager.refactorDateWithoutYear(date: model.date)
 
         tempLabel.text = "\(model.temp_avg) °C"
+        
     }
 
 }

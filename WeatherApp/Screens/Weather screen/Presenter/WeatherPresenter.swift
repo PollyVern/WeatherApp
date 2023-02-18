@@ -85,10 +85,10 @@ class WeatherPresenter {
                 weatherWeakModel.append(WeatherWeakModel(date: element.date,
                                                          temp_avg: element.parts.morning.temp_avg))
             }
-
             self.weatherModel = WeatherModel(country: model.geoObject.country.name,
                                              province: model.geoObject.province.name,
                                              week: weatherWeakModel)
+
 
             self.dispatchGroup.leave()
         })

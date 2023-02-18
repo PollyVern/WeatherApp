@@ -55,7 +55,8 @@ extension WeatherViewController: WeatherViewProtocol {
     }
 
     func setModel(model: WeatherModel) {
-        weatherView?.setData(model: model)
+        self.weatherView?.setData(model: model)
+        
     }
 
 

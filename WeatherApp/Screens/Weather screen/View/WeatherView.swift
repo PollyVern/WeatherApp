@@ -120,6 +120,7 @@ class WeatherView: UIView {
         dateLabel.text = dateFormatterManager.refactorDate(date: model.week[0].date)
 
         tempLabel.text = "\(model.week[0].temp_avg) °C"
+            
     }
 }
 
