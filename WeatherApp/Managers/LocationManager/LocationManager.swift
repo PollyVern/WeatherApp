@@ -8,7 +8,7 @@
 import CoreLocation
 import Combine
 
-class LocationManager: NSObject, CLLocationManagerDelegate {
+class LocationManager: NSObject {
 
     // MARK: - Managers
     private var locationManager: CLLocationManager?
@@ -49,6 +49,9 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 
     }
 
+}
+
+extension LocationManager: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         checkLocationStatus()
     }
@@ -68,7 +71,4 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
             locationManager?.requestLocation()
         }
     }
-
-
 }
-
