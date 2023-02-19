@@ -170,7 +170,7 @@ class WeatherView: UIView {
 
         dateFormatterManager = factoryManager.makeDateFormatterManager()
         guard let dateFormatterManager = dateFormatterManager else { return }
-        dateLabel.text = dateFormatterManager.refactorDate(date: model.week[index].date)
+        dateLabel.text = dateFormatterManager.refactorDate(date: model.week[index].date, formatType: .fullDate)
 
         tempLabel.text = "\(model.week[index].temp_avg) °C"
 

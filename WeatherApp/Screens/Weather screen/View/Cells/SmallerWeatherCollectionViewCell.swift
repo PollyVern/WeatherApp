@@ -69,7 +69,7 @@ class SmallerWeatherCollectionViewCell: UICollectionViewCell {
     func setData(model: WeatherWeakModel) {
         dateFormatterManager = factoryManager.makeDateFormatterManager()
         guard let dateFormatterManager = dateFormatterManager else { return }
-        dateLabel.text = dateFormatterManager.refactorDateWithoutYear(date: model.date)
+        dateLabel.text = dateFormatterManager.refactorDate(date: model.date, formatType: .dateWithoutYear)
 
         tempLabel.text = "\(model.temp_avg) °C"
         
