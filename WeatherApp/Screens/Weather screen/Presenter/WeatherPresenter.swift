@@ -12,6 +12,7 @@ import CoreLocation
 protocol WeatherViewProtocol {
     func setModel(model: WeatherModel)
     func hideIndicator()
+    func showAPIError(latitude: String, longitude: String)
 }
 
 class WeatherPresenter {
@@ -72,11 +73,13 @@ class WeatherPresenter {
             .store(in: &cancellable)
     }
 
-    private func setWeatherRequest(latitude: String, longitude: String) {
+    func setWeatherRequest(latitude: String, longitude: String) {
         weatherRequestFactory = factory.makeAuthRequestFactory()
         dispatchGroup.enter()
         weatherRequestFactory?.getWeather(latitude: latitude, longitude: longitude, completion: { model, error in
             guard let model = model else {
+                self.weatherView?.showAPIError(latitude: latitude, longitude: longitude)
+                self.dispatchGroup.leave()
                 return
             }
             var weatherWeakModel = [WeatherWeakModel]()
@@ -88,6 +91,7 @@ class WeatherPresenter {
                                                          wind_speed: element.parts.morning.wind_speed,
                                                          wind_gust: element.parts.morning.wind_gust))
             }
+
             self.weatherModel = WeatherModel(country: model.geoObject.country.name,
                                              province: model.geoObject.province.name,
                                              week: weatherWeakModel)

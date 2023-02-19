@@ -44,6 +44,15 @@ class WeatherViewController: UIViewController {
 }
 
 extension WeatherViewController: WeatherViewProtocol {
+
+    func showAPIError(latitude: String, longitude: String) {
+        let alert = UIAlertController(title: "Ошибка", message: "Ой, что-то пошло не так", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Повторить запрос", style: .default, handler: { _ in
+            self.presenter.setWeatherRequest(latitude: latitude, longitude: longitude)
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+
     func showIndicator() {
         activityIndicator.isHidden = false
         self.view = nil
