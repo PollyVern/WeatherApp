@@ -17,4 +17,6 @@ struct WeatherWeakModel {
     var date: String
     var temp_avg: Int
     var feels_like: Int
+    var wind_speed: Float
+    var wind_gust: Float
 }

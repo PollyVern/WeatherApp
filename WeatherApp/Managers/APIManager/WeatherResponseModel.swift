@@ -50,8 +50,10 @@ struct Parts: Codable {
 struct Morning: Codable {
     let temp_avg: Int
     let feels_like: Int
+    let wind_speed: Float
+    let wind_gust: Float
 
     enum CodingKeys: String, CodingKey {
-        case temp_avg, feels_like
+        case temp_avg, feels_like, wind_speed, wind_gust
     }
 }

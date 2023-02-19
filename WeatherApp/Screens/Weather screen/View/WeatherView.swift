@@ -58,6 +58,24 @@ class WeatherView: UIView {
         return label
     }()
 
+    private(set) lazy var windSpeedLabel: UILabel = {
+        var label = UILabel()
+        label.numberOfLines = 1
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.textColor = .white
+        label.textAlignment = .center
+        return label
+    }()
+
+    private(set) lazy var windGustLabel: UILabel = {
+        var label = UILabel()
+        label.numberOfLines = 1
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.textColor = .white
+        label.textAlignment = .center
+        return label
+    }()
+
     lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: CollectionViewLayout().createCollectionViewLayout(leading: 20, trailing: 20, height: 200, width: UIScreen.main.bounds.width/3, spacing: 8))
         collectionView.register(SmallerWeatherCollectionViewCell.self, forCellWithReuseIdentifier: String(describing: SmallerWeatherCollectionViewCell.self))
@@ -118,6 +136,22 @@ class WeatherView: UIView {
             make.trailing.equalToSuperview().inset(20)
         }
 
+        // windSpeedLabel
+        blueRectangleView.addSubview(windSpeedLabel)
+        windSpeedLabel.snp.makeConstraints { make in
+            make.top.equalTo(tempFeelsLabel.snp.bottom).offset(5)
+            make.leading.equalToSuperview().offset(20)
+            make.trailing.equalToSuperview().inset(20)
+        }
+
+        // windGustLabel
+        blueRectangleView.addSubview(windGustLabel)
+        windGustLabel.snp.makeConstraints { make in
+            make.top.equalTo(windSpeedLabel.snp.bottom).offset(5)
+            make.leading.equalToSuperview().offset(20)
+            make.trailing.equalToSuperview().inset(20)
+        }
+
         // collection
         self.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
@@ -126,6 +160,7 @@ class WeatherView: UIView {
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview().inset(40)
         }
+
     }
 
     func setData(model: WeatherModel, index: Int) {
@@ -139,7 +174,10 @@ class WeatherView: UIView {
         tempLabel.text = "\(model.week[index].temp_avg) °C"
 
         tempFeelsLabel.text = "Ощущаемая температура \(model.week[index].feels_like) °C"
-            
+
+        windSpeedLabel.text = "Скорость ветра \(model.week[index].wind_speed) м/с"
+
+        windGustLabel.text = "Скорость порывов ветра \(model.week[index].wind_gust) м/с"
     }
 }
 
