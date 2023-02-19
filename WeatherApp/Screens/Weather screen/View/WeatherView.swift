@@ -52,7 +52,7 @@ class WeatherView: UIView {
     private(set) lazy var tempFeelsLabel: UILabel = {
         var label = UILabel()
         label.numberOfLines = 0
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.font = UIFont.boldSystemFont(ofSize: 16)
         label.textColor = .white
         label.textAlignment = .center
         return label
@@ -61,7 +61,7 @@ class WeatherView: UIView {
     private(set) lazy var windSpeedLabel: UILabel = {
         var label = UILabel()
         label.numberOfLines = 1
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.font = UIFont.boldSystemFont(ofSize: 16)
         label.textColor = .white
         label.textAlignment = .center
         return label
@@ -70,7 +70,7 @@ class WeatherView: UIView {
     private(set) lazy var windGustLabel: UILabel = {
         var label = UILabel()
         label.numberOfLines = 1
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.font = UIFont.boldSystemFont(ofSize: 16)
         label.textColor = .white
         label.textAlignment = .center
         return label
