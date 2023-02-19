@@ -196,8 +196,21 @@ extension WeatherView: UICollectionViewDataSource, UICollectionViewDelegate {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let model = model else { return }
+
+        guard  let model = model else { return }
         setData(model: model, index: indexPath.row)
+
+        if let cell = collectionView.cellForItem(at: indexPath) as? SmallerWeatherCollectionViewCell {
+            cell.setSelectedCell()
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SmallerWeatherCollectionViewCell else {
+            return
+        }
+
+        cell.setDeselectedCell()
     }
 
 }

@@ -75,4 +75,14 @@ class SmallerWeatherCollectionViewCell: UICollectionViewCell {
         
     }
 
+    func setSelectedCell() {
+        background.layer.borderWidth = 3.0
+        background.layer.borderColor = UIColor.lightBlueColor.cgColor
+    }
+
+    func setDeselectedCell() {
+        background.layer.borderWidth = 0.0
+        background.layer.borderColor = UIColor.clear.cgColor
+    }
+
 }
