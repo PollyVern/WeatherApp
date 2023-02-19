@@ -44,6 +44,12 @@ class WeatherViewController: UIViewController {
 }
 
 extension WeatherViewController: WeatherViewProtocol {
+    func showInfoAlert() {
+        let alert = UIAlertController(title: "Ой!", message: "В геолокации отказано. Показываю город по дефолту - Москва", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ок", style: .default, handler: { _ in }))
+        self.present(alert, animated: true, completion: nil)
+    }
+
 
     func showAPIError(latitude: String, longitude: String) {
         let alert = UIAlertController(title: "Ошибка", message: "Ой, что-то пошло не так", preferredStyle: .alert)

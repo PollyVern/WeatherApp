@@ -13,6 +13,7 @@ protocol WeatherViewProtocol {
     func setModel(model: WeatherModel)
     func hideIndicator()
     func showAPIError(latitude: String, longitude: String)
+    func showInfoAlert()
 }
 
 class WeatherPresenter {
@@ -68,6 +69,7 @@ class WeatherPresenter {
                 }
                 if !isDetermined {
                     self.setWeatherRequest(latitude: self.defaultWeatherModel.latitude, longitude: self.defaultWeatherModel.longitude)
+                    self.weatherView?.showInfoAlert()
                 }
             }
             .store(in: &cancellable)
