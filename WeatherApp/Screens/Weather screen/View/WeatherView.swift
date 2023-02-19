@@ -83,6 +83,7 @@ class WeatherView: UIView {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.alwaysBounceVertical = false
         return collectionView
 
     }()
