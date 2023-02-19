@@ -31,20 +31,20 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         case .authorizedAlways, .authorizedWhenInUse:
             locationManager.startUpdatingLocation()
             isDetermined = true
-            print("?? authorizedAlways")
+            print("❖ authorizationStatus: authorizedAlways")
         case .denied:
-            print("?? denied")
+            print("❖ authorizationStatus: denied")
             isDetermined = false
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
             isDetermined = nil
-            print("?? notDetermined")
+            print("❖ authorizationStatus: notDetermined")
         case .restricted:
             isDetermined = true
-            print("?? restricted")
+            print("❖ authorizationStatus: restricted")
         @unknown default:
             isDetermined = false
-            print("?? default")
+            print("❖ authorizationStatus: default")
         }
 
     }
