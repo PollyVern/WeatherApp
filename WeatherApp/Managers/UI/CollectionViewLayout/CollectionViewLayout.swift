@@ -25,7 +25,7 @@ extension CollectionViewLayout {
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(width), heightDimension: .absolute(height))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 1)
 
         let layoutSection = NSCollectionLayoutSection(group: group)
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: leading, bottom: 0, trailing: trailing)
