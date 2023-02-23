@@ -10,11 +10,9 @@ import UIKit
 final class CollectionViewLayout {
 
     public func createCollectionViewLayout(leading: CGFloat, trailing: CGFloat, height: CGFloat, width: CGFloat, spacing: CGFloat) -> UICollectionViewLayout {
-
         let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
             return self.createWeatherCollectionViewLayout(leading: leading, trailing: trailing, height: height, width: width, spacing: spacing)
         }
-        
         return layout
     }
 }
