@@ -4,7 +4,6 @@ UIKit + Alamofire + Factory + MVP
 <img src="https://github.com/PollyVern/WeatherApp/blob/master/Screen%20Shot.png" height="400" width="180">
 
 ## Для работы с приложением нужно добавить API ключ!
-### ⓵ API ключ
 Cоздайте API ключ и занесите его в переменную окружения Xcode. А именно:
 
 1. Получите ключ в https://yandex.ru/dev/weather/
@@ -14,3 +13,7 @@ Cоздайте API ключ и занесите его в переменную 
 <img src="https://github.com/PollyVern/WeatherApp/blob/master/ReadmeResources/stepOne.png" width="200">
 
 ... -> `Run` -> `Arguments` -> `Environment Variables` -> `+`
+
+<img src="https://github.com/PollyVern/WeatherApp/blob/master/ReadmeResources/stepSecond.png" width="700">
+
+И создайте переменную окружения с именем `weather_key_API`. В значение вставьте ключ API.
