@@ -16,17 +16,18 @@ final class WeatherRequestFactory {
         let parameters: [String : Any] = [
             "lat": latitude,
             "lon": longitude,
-            "lang": "ru_RU",
-            "limit": "7"
+            "lang": "ru_RU"
         ]
 
         let request = WeatherRequestRouter.getWeather(parameters: parameters)
         sessionManager.request(request).responseDecodable(of: WeatherResponseModel.self) { response in
             switch response.result {
             case .success(let response):
+                print("?? response \(response)")
                 completion(response, nil)
                 return
             case .failure(let error):
+                print("?? error \(error)")
                 completion(nil, error)
                 return
             }

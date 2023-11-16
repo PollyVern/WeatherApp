@@ -13,7 +13,7 @@ enum WeatherRequestRouter: RequestRouter {
     case getWeather(parameters: Parameters)
 
     var url: URL {
-        return URL.init(string: Constants.baseUrl + "/forecast")!
+        return URL.init(string: Constants.baseUrl + "/informers")!
     }
 
     var method: HTTPMethod {
@@ -39,6 +39,7 @@ enum WeatherRequestRouter: RequestRouter {
 
     func asURLRequest() throws -> URLRequest {
         var urlRequest = URLRequest(url: url)
+        print("?? url \(url)")
         urlRequest.httpMethod = method.rawValue
         urlRequest.headers = headers
         urlRequest = try URLEncoding.queryString.encode(urlRequest, with: queryParameters)
