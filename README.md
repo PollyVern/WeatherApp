@@ -16,4 +16,4 @@ Cоздайте API ключ и занесите его в переменную 
 
 <img src="https://github.com/PollyVern/WeatherApp/blob/master/ReadmeResources/stepSecond.png" width="700">
 
-И создайте переменную окружения с именем `weather_key_API`. В значение вставьте ключ API.
+И создайте переменную окружения с именем `weatherKeyAPI`. В значение вставьте ключ API.
