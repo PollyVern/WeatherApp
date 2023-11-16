@@ -26,7 +26,7 @@ enum WeatherRequestRouter: RequestRouter {
     var headers: HTTPHeaders {
         switch self {
         case .getWeather:
-            return ["X-Yandex-API-Key": Constants.keyAPI]
+            return ["X-Yandex-API-Key": Constants.weatherKeyAPI]
         }
     }
 
