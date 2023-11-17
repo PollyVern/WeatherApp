@@ -7,71 +7,62 @@
 
 import UIKit
 
+
+// MARK: - Controller
 class WeatherViewController: UIViewController {
 
-    private var weatherView: WeatherView? = nil
-    private let presenter = WeatherPresenter(locationManager: LocationManager())
-
-    private(set) lazy var activityIndicator: UIActivityIndicatorView = {
-        let activityIndicator = UIActivityIndicatorView()
-        activityIndicator.center = self.view.center
-        activityIndicator.style = .large
-        activityIndicator.isHidden = false
-        activityIndicator.color = .gray
-        return activityIndicator
-    }()
+    private var weatherView: WeatherViewProtocol = WeatherView(state: .activityIndicatorState)
+    private let presenter = WeatherPresenter(locationManager: LocationManager.shared())
 
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter.attachView(view: self)
         setupUI()
     }
+}
 
-    private func setupUI() {
-        view.backgroundColor = .backgroundColor
+// MARK: - Private extension
+private extension WeatherViewController {
 
-        // weatherView
-        weatherView = WeatherView(frame: self.view.frame)
-
-        // activityIndicator
-        view.addSubview(activityIndicator)
-        activityIndicator.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
-        activityIndicator.startAnimating()
+    func setupUI() {
+        self.view.addSubview(weatherView)
+        weatherView.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
 
 }
 
-extension WeatherViewController: WeatherViewProtocol {
-    func showInfoAlert() {
-        let alert = UIAlertController(title: "Ой!", message: "В геолокации отказано. Показываю город по дефолту - Москва", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ок", style: .default, handler: { _ in }))
-        self.present(alert, animated: true, completion: nil)
+// MARK: - Protocol
+extension WeatherViewController: WeatherProtocol {
+    func setContentState(state: WeatherViewScreenType) {
+        self.weatherView.changeContentState(state: state)
     }
-
+    
+//    func showInfoAlert() {
+////        let alert = UIAlertController(title: "Ой!", message: "В геолокации отказано. Показываю город по дефолту - Москва", preferredStyle: .alert)
+////        alert.addAction(UIAlertAction(title: "Ок", style: .default, handler: { _ in }))
+////        self.present(alert, animated: true, completion: nil)
+//    }
 
     func showAPIError(latitude: String, longitude: String) {
-        let alert = UIAlertController(title: "Ошибка", message: "Ой, что-то пошло не так", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Повторить запрос", style: .default, handler: { _ in
-            self.presenter.setWeatherRequest(latitude: latitude, longitude: longitude)
-        }))
-        self.present(alert, animated: true, completion: nil)
+        self.showDefaultAlert(type: .error) { [weak self] in
+            guard let self = self else { return }
+            self.presenter.repeatWeatherRequest(latitude: latitude, longitude: longitude)
+        }
     }
+//
+//    func showIndicator() {
+////        activityIndicator.isHidden = false
+////        self.view = nil
+//    }
+//
+//    func hideIndicator() {
+////        activityIndicator.isHidden = true
+////        self.view = self.weatherView
+//    }
 
-    func showIndicator() {
-        activityIndicator.isHidden = false
-        self.view = nil
-    }
-
-    func hideIndicator() {
-        activityIndicator.isHidden = true
-        self.view = self.weatherView
-    }
-
-    func setModel(model: WeatherModel) {
-        self.weatherView?.setData(model: model, index: 0)
-    }
+//    func setModel(model: WeatherModel) {
+////        self.weatherView?.setData(model: model, index: 0)
+//    }
 
 
 }

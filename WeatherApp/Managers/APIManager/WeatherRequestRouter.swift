@@ -13,7 +13,7 @@ enum WeatherRequestRouter: RequestRouter {
     case getWeather(parameters: Parameters)
 
     var url: URL {
-        return URL.init(string: Constants.baseUrl + "/informers")!
+        return URL.init(string: ConstantsAPI.shared().baseUrlString + ConstantsAPI.shared().informersUrlString)!
     }
 
     var method: HTTPMethod {
@@ -26,7 +26,7 @@ enum WeatherRequestRouter: RequestRouter {
     var headers: HTTPHeaders {
         switch self {
         case .getWeather:
-            return ["X-Yandex-API-Key": Constants.weatherKeyAPI]
+            return [ConstantsAPI.shared().yandexApiHeader: ConstantsAPI.shared().weatherKeyAPI]
         }
     }
 
@@ -39,7 +39,6 @@ enum WeatherRequestRouter: RequestRouter {
 
     func asURLRequest() throws -> URLRequest {
         var urlRequest = URLRequest(url: url)
-        print("?? url \(url)")
         urlRequest.httpMethod = method.rawValue
         urlRequest.headers = headers
         urlRequest = try URLEncoding.queryString.encode(urlRequest, with: queryParameters)

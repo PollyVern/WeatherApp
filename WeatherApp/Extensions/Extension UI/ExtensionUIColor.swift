@@ -1,5 +1,5 @@
 //
-//  Color.swift
+//  ExtensionUI.swift
 //  WeatherApp
 //
 //  Created by Polina Belovodskaya on 18.02.2023.

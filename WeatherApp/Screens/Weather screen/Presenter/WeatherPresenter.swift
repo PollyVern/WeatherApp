@@ -9,11 +9,12 @@ import Foundation
 import Combine
 import CoreLocation
 
-protocol WeatherViewProtocol {
-    func setModel(model: WeatherModel)
-    func hideIndicator()
+protocol WeatherProtocol: AnyObject {
+//    func setModel(model: WeatherModel)
+//    func hideIndicator()
     func showAPIError(latitude: String, longitude: String)
-    func showInfoAlert()
+    func setContentState(state: WeatherViewScreenType)
+//    func showInfoAlert()
 }
 
 class WeatherPresenter {
@@ -24,29 +25,38 @@ class WeatherPresenter {
     private let factory = RequestFactoryManager()
 
     // MARK: - Protocol
-    private var weatherView: WeatherViewProtocol?
+    private weak var weatherView: WeatherProtocol?
 
     // MARK: - Model
-    private var defaultWeatherModel = DefaultWeatherModel()
-    private var weatherModel: WeatherModel?
+//    private var defaultWeatherModel = DefaultWeatherModel()
+//    private var weatherModel: WeatherModel?
 
     // MARK: - Combine
     private var cancellable = Set<AnyCancellable>()
 
-    let dispatchGroup = DispatchGroup()
+    private let dispatchGroup = DispatchGroup()
 
     init(locationManager: LocationManager) {
         self.locationManager = locationManager
         setLocationManager()
     }
 
-    func attachView(view: WeatherViewProtocol) {
+    func attachView(view: WeatherProtocol) {
         weatherView = view
     }
 
-    func detachView() {
-        weatherView = nil
+    func repeatWeatherRequest(latitude: String, longitude: String) {
+        setWeatherRequest(latitude: latitude, longitude: longitude)
     }
+
+//    func detachView() {
+////        weatherView = nil
+//    }
+
+}
+
+
+private extension WeatherPresenter {
 
     private func setLocationManager() {
         locationManager.setLocationManager()
@@ -56,56 +66,57 @@ class WeatherPresenter {
                       let location = location else {
                     return
                 }
-                self.setWeatherRequest(latitude: "\(location.coordinate.latitude)", longitude: "\(location.coordinate.longitude)")
-                
+                DispatchQueue.main.async {
+                    self.setWeatherRequest(latitude: "\(location.coordinate.latitude)", longitude: "\(location.coordinate.longitude)")
+                }
+
             }
             .store(in: &cancellable)
 
-        locationManager.$isDetermined
-            .sink { [weak self] isDetermined in
-                guard let self = self,
-                      let isDetermined = isDetermined else {
-                    return
-                }
-                if !isDetermined {
-                    self.setWeatherRequest(latitude: self.defaultWeatherModel.latitude, longitude: self.defaultWeatherModel.longitude)
-                    self.weatherView?.showInfoAlert()
-                }
-            }
-            .store(in: &cancellable)
+//        locationManager.$isDetermined
+//            .sink { [weak self] isDetermined in
+//                guard let self = self,
+//                      let isDetermined = isDetermined else {
+//                    return
+//                }
+//                if !isDetermined {
+//                    self.setWeatherRequest(latitude: self.defaultWeatherModel.latitude, longitude: self.defaultWeatherModel.longitude)
+////                    self.weatherView?.showInfoAlert()
+//                }
+//            }
+//            .store(in: &cancellable)
     }
 
     func setWeatherRequest(latitude: String, longitude: String) {
         weatherRequestFactory = factory.makeAuthRequestFactory()
         dispatchGroup.enter()
-        weatherRequestFactory?.getWeather(latitude: latitude, longitude: longitude, completion: { model, error in
-            guard let model = model else {
-                self.weatherView?.showAPIError(latitude: latitude, longitude: longitude)
-                self.dispatchGroup.leave()
+        weatherRequestFactory?.getWeather(latitude: latitude, longitude: longitude, completion: { [weak self] model, error in
+            guard let self = self,
+                  let model = model,
+                  let locationValue = locationManager.getCountryAndCity() else {
+                self?.weatherView?.showAPIError(latitude: latitude, longitude: longitude)
+                self?.dispatchGroup.leave()
                 return
             }
-            var weatherWeakModel = [WeatherWeakModel]()
 
-//            model.forecast.forEach { element in
-//                weatherWeakModel.append(WeatherWeakModel(date: element.date,
-//                                                         temp_avg: element.parts.morning.temp_avg,
-//                                                         feels_like: element.parts.morning.feels_like,
-//                                                         wind_speed: element.parts.morning.wind_speed,
-//                                                         wind_gust: element.parts.morning.wind_gust))
-//            }
-
-//            self.weatherModel = WeatherModel(country: model.geoObject.country.name,
-//                                             province: model.geoObject.province.name,
-//                                             week: weatherWeakModel)
-
-
+            var parts = [WeatherPartModel]()
+            model.forecast.parts.forEach { part in
+                parts.append(WeatherPartModel(temp_avg: part.temp_avg,
+                                              feels_like: part.feels_like,
+                                              wind_speed: part.wind_speed,
+                                              wind_gust: part.wind_gust))
+            }
+            let weatherModel = WeatherModel(country: locationValue.0,
+                                            city: locationValue.1,
+                                            date: model.forecast.date,
+                                            parts: parts)
+            GlobalWeatherBuilder.shared().setWeatherModel(model: weatherModel)
             self.dispatchGroup.leave()
         })
 
         self.dispatchGroup.notify(queue: .main) {
-            guard let weatherModel = self.weatherModel else { return }
-            self.weatherView?.hideIndicator()
-            self.weatherView?.setModel(model: weatherModel)
+            guard let weatherModel = GlobalWeatherBuilder.shared().build() else { return }
+            self.weatherView?.setContentState(state: .contentViewState(model: weatherModel))
         }
     }
 

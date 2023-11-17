@@ -12,26 +12,29 @@ final class WeatherRequestFactory {
 
     private var sessionManager = Session()
 
+    private let constantsAPI = ConstantsAPI.shared()
+
     public func getWeather(latitude: String, longitude: String, completion: @escaping (WeatherResponseModel?, AFError?) -> Void) {
         let parameters: [String : Any] = [
-            "lat": latitude,
-            "lon": longitude,
-            "lang": "ru_RU"
+            constantsAPI.lat: latitude,
+            constantsAPI.lon: longitude,
+            constantsAPI.lang: constantsAPI.langRu
         ]
 
         let request = WeatherRequestRouter.getWeather(parameters: parameters)
-        sessionManager.request(request).responseDecodable(of: WeatherResponseModel.self) { response in
-            switch response.result {
-            case .success(let response):
-                print("?? response \(response)")
-                completion(response, nil)
-                return
-            case .failure(let error):
-                print("?? error \(error)")
-                completion(nil, error)
-                return
+        sessionManager.request(request).responseDecodable(of: WeatherResponseModel.self) { [weak self] response in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                switch response.result {
+                case .success(let response):
+                    completion(response, nil)
+                    return
+                case .failure(let error):
+                    completion(nil, error)
+                    return
+                }
             }
         }
-
     }
+
 }

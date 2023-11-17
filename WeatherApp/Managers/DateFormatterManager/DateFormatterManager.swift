@@ -7,29 +7,23 @@
 
 import Foundation
 
-enum FormatterSetType {
-    case fullDate
-    case dateWithoutYear
 
-    var format: String {
-        switch self {
-        case .fullDate:
-            return "dd MMMM yyyy"
-        case .dateWithoutYear:
-            return "dd MMMM"
-        }
+class DateFormatterManager {
+
+    private static let sharedInstance = DateFormatterManager()
+
+    private let localeIdentifier = "RU"
+
+    public static func shared() -> DateFormatterManager {
+        return sharedInstance
     }
-}
-
-final class DateFormatterManager {
 
     func refactorDate(date: String, formatType: FormatterSetType) -> String? {
-
         let dateFormatterGet = DateFormatter()
-        dateFormatterGet.dateFormat = "yyyy-mm-dd"
+        dateFormatterGet.dateFormat = FormatterSetType.getApiDate.format
 
         let dateFormatterSet = DateFormatter()
-        dateFormatterSet.locale = Locale(identifier: "RU")
+        dateFormatterSet.locale = Locale(identifier: localeIdentifier)
         dateFormatterSet.dateFormat = formatType.format
 
         if let date = dateFormatterGet.date(from: date) {

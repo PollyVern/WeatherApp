@@ -8,16 +8,28 @@
 import UIKit
 import SnapKit
 
+
+// MARK: Protocol
+protocol WeatherViewProtocol: UIView {
+
+    func changeContentState(state: WeatherViewScreenType)
+
+}
+
 class WeatherView: UIView {
 
-    // MARK: - Model
+    // MARK: Model
     private var model: WeatherModel?
 
-    // MARK: - Managers
-    private var dateFormatterManager: DateFormatterManager?
-    private let factoryManager = FactoryManager()
+    // MARK: Managers
+    private var dateFormatterManager = DateFormatterManager.shared()
+
+    // MARK: Init view
+    private var state: WeatherViewScreenType
 
     // MARK: - UI
+    private(set) var activityIndicator: UIActivityIndicatorView?
+
     private(set) lazy var localLabel: UILabel = {
         var label = UILabel()
         label.numberOfLines = 0
@@ -77,7 +89,7 @@ class WeatherView: UIView {
     }()
 
     lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: CollectionViewLayout().createCollectionViewLayout(leading: 20, trailing: 20, height: 200, width: UIScreen.main.bounds.width/3, spacing: 8))
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: CollectionViewLayoutManager.shared().createCollectionViewLayout(leading: 20, trailing: 20, height: 200, width: UIScreen.main.bounds.width/3, spacing: 8))
         collectionView.register(SmallerWeatherCollectionViewCell.self, forCellWithReuseIdentifier: String(describing: SmallerWeatherCollectionViewCell.self))
         collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
@@ -88,16 +100,87 @@ class WeatherView: UIView {
 
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupUI()
+    init(state: WeatherViewScreenType) {
+        self.state = state
+        super.init(frame: .zero)
+        self.backgroundColor = .backgroundColor
+        changeContentState(state: .activityIndicatorState)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
 
-    private func setupUI() {
+extension WeatherView: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        guard let model = model else { return 1 }
+        return model.parts.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: SmallerWeatherCollectionViewCell.self), for: indexPath) as? SmallerWeatherCollectionViewCell
+        guard let cell = cell,
+              let model = model else { return UICollectionViewCell() }
+        cell.setData(model: model.parts[indexPath.row])
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
+//        guard  let model = model else { return }
+//        setData(model: model, index: indexPath.row)
+//
+//        if let cell = collectionView.cellForItem(at: indexPath) as? SmallerWeatherCollectionViewCell {
+//            cell.setSelectedCell()
+//        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SmallerWeatherCollectionViewCell else {
+            return
+        }
+        cell.setDeselectedCell()
+    }
+
+}
+
+extension WeatherView: WeatherViewProtocol {
+
+    func changeContentState(state: WeatherViewScreenType) {
+        switch state {
+        case .activityIndicatorState:
+            setActivityIndicator(show: true)
+        case .contentViewState(let model):
+            setActivityIndicator(show: false)
+            setupUI()
+            setupData(model: model)
+        }
+    }
+
+}
+
+private extension WeatherView {
+
+    func setActivityIndicator(show: Bool) {
+        if show {
+            if activityIndicator == nil {
+                activityIndicator = UIActivityIndicatorView()
+                guard let activityIndicator = activityIndicator else { return }
+                activityIndicator.style = .large
+                activityIndicator.isHidden = false
+                activityIndicator.color = .gray
+                activityIndicator.startAnimating()
+                self.addSubview(activityIndicator)
+                activityIndicator.snp.makeConstraints {$0.center.equalToSuperview()}
+            }
+        } else {
+            activityIndicator?.removeFromSuperview()
+            activityIndicator = nil
+        }
+    }
+
+    func setupUI() {
         self.backgroundColor = .backgroundColor
 
         // localLabel
@@ -161,57 +244,24 @@ class WeatherView: UIView {
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview().inset(40)
         }
-
     }
 
-    func setData(model: WeatherModel, index: Int) {
+    func setupData(model: WeatherModel) {
         self.model = model
-        localLabel.text = "\(model.province.uppercased()), \n\(model.country)"
-
-        dateFormatterManager = factoryManager.makeDateFormatterManager()
-        guard let dateFormatterManager = dateFormatterManager else { return }
-        dateLabel.text = dateFormatterManager.refactorDate(date: model.week[index].date, formatType: .fullDate)
-
-        tempLabel.text = "\(model.week[index].temp_avg) °C"
-
-        tempFeelsLabel.text = "Ощущаемая температура \(model.week[index].feels_like) °C"
-
-        windSpeedLabel.text = "Скорость ветра \(model.week[index].wind_speed) м/с"
-
-        windGustLabel.text = "Скорость порывов ветра \(model.week[index].wind_gust) м/с"
-    }
-}
-
-extension WeatherView: UICollectionViewDataSource, UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let model = model else { return 1 }
-        return model.week.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: SmallerWeatherCollectionViewCell.self), for: indexPath) as? SmallerWeatherCollectionViewCell
-        guard let cell = cell,
-              let model = model else { return UICollectionViewCell() }
-        cell.setData(model: model.week[indexPath.row])
-        return cell
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
-        guard  let model = model else { return }
-        setData(model: model, index: indexPath.row)
-
-        if let cell = collectionView.cellForItem(at: indexPath) as? SmallerWeatherCollectionViewCell {
-            cell.setSelectedCell()
+        localLabel.text = "\(model.city.uppercased()), \n\(model.country)"
+        dateLabel.text = dateFormatterManager.refactorDate(date: model.date, formatType: .fullDate)
+        if let temp_avg = model.parts.first?.temp_avg {
+            tempLabel.text = "\(temp_avg)" + " " + NSLocalizedString("degrees", comment: "")
         }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? SmallerWeatherCollectionViewCell else {
-            return
+        if let feels_like = model.parts.first?.feels_like {
+            tempFeelsLabel.text = String(format: NSLocalizedString("perceived_temperature", comment: ""), "\(feels_like)")
         }
-
-        cell.setDeselectedCell()
+        if let wind_speed = model.parts.first?.wind_speed {
+            windSpeedLabel.text = String(format: NSLocalizedString("wind_speed", comment: ""), "\(wind_speed)")
+        }
+        if let wind_gust = model.parts.first?.wind_gust {
+            windGustLabel.text = String(format: NSLocalizedString("speed_of_wind_gusts", comment: ""), "\(wind_gust)")
+        }
     }
 
 }
