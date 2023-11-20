@@ -1,19 +1,28 @@
-# WeatherApp
-UIKit + Alamofire + Factory + MVP
+## Test client-server iOS application
+## Application Stack:
+☑ Layout using **UIKit** + **SnapKit**
+
+☑ API requests made on **Alamofire** networking layer
+
+☑ **Singlton, Factory, Builder** patterns used
+
+☑ **MVP** architecture based on delegates and protocols
+
+☑ All libraries imported with **Package**
 
 <img src="https://github.com/PollyVern/WeatherApp/blob/master/Screen%20Shot.png" height="400" width="180">
 
-## Для работы с приложением нужно добавить API ключ!
-Cоздайте API ключ и занесите его в переменную окружения Xcode. А именно:
+## You need to add an API key to work with the application!
+Create an API key and put it in an Xcode environment variable. Specifically:
 
-1. Получите ключ в https://yandex.ru/dev/weather/
-2. В кабинете разработчика поменяйте тариф "Тестовый" на "Погода на вашем сайте", так как API на этих тарифах различаются  
+1. Get the key from https://yandex.ru/dev/weather/
+2. In the developer cabinet, change the "Test" tariff to "Weather on your site", as the APIs on these tariffs are different  
 
-3. Перейдите в `Xcode` -> `Edit Scheme...` -> ...
+3. Go to `Xcode` -> `Edit Scheme...` -> ...
 <img src="https://github.com/PollyVern/WeatherApp/blob/master/ReadmeResources/stepOne.png" width="200">
 
 ... -> `Run` -> `Arguments` -> `Environment Variables` -> `+`
 
 <img src="https://github.com/PollyVern/WeatherApp/blob/master/ReadmeResources/stepSecond.png" width="700">
 
-И создайте переменную окружения с именем `weatherKeyAPI`. В значение вставьте ключ API.
+And create an environment variable named `weatherKeyAPI`. Insert the API key into the value.
