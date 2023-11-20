@@ -10,4 +10,5 @@ import Foundation
 enum WeatherViewScreenType {
     case activityIndicatorState
     case contentViewState(model: WeatherModel)
+    case linkToGithubRepository
 }

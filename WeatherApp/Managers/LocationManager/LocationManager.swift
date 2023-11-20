@@ -35,7 +35,7 @@ class LocationManager: NSObject {
         defaultLocationManager.requestLocation()
     }
 
-    func getCountryAndCity() -> (String, String)? {
+    func getLocationValue() -> (String, String)? {
         return locationValue
     }
 
@@ -50,8 +50,8 @@ extension LocationManager: CLLocationManagerDelegate {
         guard let location = locations.first else { return }
         if currentLocation == nil {
             currentLocation = CLLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-            setCountryAndCity(location: location)
             manager.stopUpdatingLocation()
+            setCountryAndCity()
         }
     }
 
@@ -76,6 +76,7 @@ private extension LocationManager {
         case .denied:
             print("❖ authorizationStatus: denied")
             isDetermined = false
+            setCountryAndCity()
         case .notDetermined:
             defaultLocationManager.requestWhenInUseAuthorization()
             isDetermined = nil
@@ -89,8 +90,9 @@ private extension LocationManager {
         }
     }
 
-    func setCountryAndCity(location: CLLocation) {
-        CLGeocoder().reverseGeocodeLocation(location, completionHandler: { [weak self] placemark, _ in
+    func setCountryAndCity() {
+        let currentLocation = currentLocation ?? CLLocation(latitude: AppConstants.shared().defaultLatitude, longitude: AppConstants.shared().defaultLongitude)
+        CLGeocoder().reverseGeocodeLocation(currentLocation, completionHandler: { [weak self] placemark, _ in
             guard let self = self else { return }
             if let country = placemark?.first?.country,
                let city = placemark?.first?.locality {

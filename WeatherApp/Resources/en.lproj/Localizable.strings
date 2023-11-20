@@ -1,0 +1,21 @@
+/* 
+  Localizable.strings
+  WeatherApp
+
+  Created by Polina Belovodskaya on 17.11.2023.
+  
+*/
+
+"error_title" = "Error";
+"error_message_something_went_wrong" = "Something went wrong";
+"error_button_repeat_request" = "Repeat the request";
+"perceived_temperature" = "Perceived temperature %@ °C";
+"degrees" = "°C";
+"wind_speed" = "Wind speed %@ m/s";
+"speed_of_wind_gusts" = "Speed of wind gusts %@ m/s";
+"info_alert_oops_title" = "Oops!";
+"info_alert_message_geolocation_denied" = "Geolocation denied.\nShowing the city by default - Paris";
+"info_button_ok" = "Ok";
+"info_api_key_error_title" = "Attention!\the application is running without an API key in the environment variable";
+"info_api_key_error_message" = "The instructions are in the Readme";
+"info_api_key_error_button_title" = "Go to the GitHub repository";

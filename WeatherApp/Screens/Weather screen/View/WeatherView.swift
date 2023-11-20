@@ -9,14 +9,21 @@ import UIKit
 import SnapKit
 
 
-// MARK: Protocol
-protocol WeatherViewProtocol: UIView {
-
-    func changeContentState(state: WeatherViewScreenType)
-
+// MARK: - Delegate
+protocol WeatherViewDelegate: AnyObject {
+    func tapOnSelf()
 }
 
+// MARK: - Protocol
+protocol WeatherViewProtocol: UIView {
+    var delegate: WeatherViewDelegate? { get set }
+    func changeContentState(state: WeatherViewScreenType)
+}
+
+// MARK: - View
 class WeatherView: UIView {
+
+    weak var delegate: WeatherViewDelegate?
 
     // MARK: Model
     private var model: WeatherModel?
@@ -88,7 +95,7 @@ class WeatherView: UIView {
         return label
     }()
 
-    lazy var collectionView: UICollectionView = {
+    private(set) lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: CollectionViewLayoutManager.shared().createCollectionViewLayout(leading: 20, trailing: 20, height: 200, width: UIScreen.main.bounds.width/3, spacing: 8))
         collectionView.register(SmallerWeatherCollectionViewCell.self, forCellWithReuseIdentifier: String(describing: SmallerWeatherCollectionViewCell.self))
         collectionView.backgroundColor = .clear
@@ -97,8 +104,14 @@ class WeatherView: UIView {
         collectionView.delegate = self
         collectionView.alwaysBounceVertical = false
         return collectionView
-
     }()
+
+    private(set) lazy var githubPlugView: GithubPlugViewProtocol = {
+        let view = GithubPlugView()
+        view.delegate = self
+        return view
+    }()
+
 
     init(state: WeatherViewScreenType) {
         self.state = state
@@ -146,7 +159,6 @@ extension WeatherView: UICollectionViewDataSource, UICollectionViewDelegate {
 }
 
 extension WeatherView: WeatherViewProtocol {
-
     func changeContentState(state: WeatherViewScreenType) {
         switch state {
         case .activityIndicatorState:
@@ -155,9 +167,11 @@ extension WeatherView: WeatherViewProtocol {
             setActivityIndicator(show: false)
             setupUI()
             setupData(model: model)
+        case .linkToGithubRepository:
+            setActivityIndicator(show: false)
+            setupGithubView()
         }
     }
-
 }
 
 private extension WeatherView {
@@ -264,4 +278,16 @@ private extension WeatherView {
         }
     }
 
+    func setupGithubView() {
+        self.addSubview(githubPlugView)
+        githubPlugView.snp.makeConstraints { make in
+            make.leading.trailing.centerY.equalToSuperview()
+        }
+    }
+}
+
+extension WeatherView: GithubPlugViewDelegate {
+    func tapOnSelf() {
+        delegate?.tapOnSelf()
+    }
 }

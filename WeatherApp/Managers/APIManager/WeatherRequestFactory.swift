@@ -14,10 +14,10 @@ final class WeatherRequestFactory {
 
     private let constantsAPI = ConstantsAPI.shared()
 
-    public func getWeather(latitude: String, longitude: String, completion: @escaping (WeatherResponseModel?, AFError?) -> Void) {
+    public func getWeather(latitude: Double, longitude: Double, completion: @escaping (WeatherResponseModel?, AFError?) -> Void) {
         let parameters: [String : Any] = [
-            constantsAPI.lat: latitude,
-            constantsAPI.lon: longitude,
+            constantsAPI.lat: "\(latitude)",
+            constantsAPI.lon: "\(longitude)",
             constantsAPI.lang: constantsAPI.langRu
         ]
 
