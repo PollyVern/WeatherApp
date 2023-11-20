@@ -16,6 +16,7 @@
 "info_alert_oops_title" = "Ой!";
 "info_alert_message_geolocation_denied" = "В геолокации отказано.\nПоказываю город по дефолту - Париж";
 "info_button_ok" = "Хорошо";
-"info_api_key_error_title" = "Внимание!\nПриложение запущено без API ключа в переменной окружения";
+"info_api_key_error_title" = "Внимание!\nПриложение запущено без API ключа в переменной окружения XCode";
 "info_api_key_error_message" = "Инструкция находится в Readme";
 "info_api_key_error_button_title" = "Перейти в GitHub репозиторий";
+"info_error_max_req_message" = "Превышено максимальное количество запросов в день";

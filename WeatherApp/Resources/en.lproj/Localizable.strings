@@ -16,6 +16,7 @@
 "info_alert_oops_title" = "Oops!";
 "info_alert_message_geolocation_denied" = "Geolocation denied.\nShowing the city by default - Paris";
 "info_button_ok" = "Ok";
-"info_api_key_error_title" = "Attention!\the application is running without an API key in the environment variable";
+"info_api_key_error_title" = "Attention!\the application is running without an API key in the environment variable XCode";
 "info_api_key_error_message" = "The instructions are in the Readme";
 "info_api_key_error_button_title" = "Go to the GitHub repository";
+"info_error_max_req_message" = "Exceeded the maximum number of requests per day";

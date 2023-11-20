@@ -27,9 +27,17 @@ final class WeatherRequestFactory {
             DispatchQueue.main.async {
                 switch response.result {
                 case .success(let response):
+                    print("?? 1")
                     completion(response, nil)
                     return
                 case .failure(let error):
+                    if let statusCode = response.response?.statusCode {
+                        if statusCode == 403 {
+                            ConstantsUI.shared().navigationController?.showDefaultAlert(type: .maximumRequest, buttonAction: { [weak self] in
+                                guard let _ = self else { return }
+                            })
+                        }
+                    }
                     completion(nil, error)
                     return
                 }
