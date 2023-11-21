@@ -9,46 +9,50 @@ import Foundation
 import Combine
 import CoreLocation
 
-protocol WeatherViewProtocol {
-    func setModel(model: WeatherModel)
-    func hideIndicator()
-    func showAPIError(latitude: String, longitude: String)
+protocol WeatherProtocol: AnyObject {
+    func showAPIErrorAlert(latitude: Double, longitude: Double)
     func showInfoAlert()
+    func showApiKeyAlert()
+    func setContentState(state: WeatherViewScreenType)
 }
 
 class WeatherPresenter {
 
     // MARK: - Managers and Factory
-    private let locationManager: LocationManager
+    private let locationManager: LocationManager = LocationManager.shared()
     private var weatherRequestFactory: WeatherRequestFactory?
     private let factory = RequestFactoryManager()
 
     // MARK: - Protocol
-    private var weatherView: WeatherViewProtocol?
-
-    // MARK: - Model
-    private var defaultWeatherModel = DefaultWeatherModel()
-    private var weatherModel: WeatherModel?
+    private weak var weatherView: WeatherProtocol?
 
     // MARK: - Combine
     private var cancellable = Set<AnyCancellable>()
 
-    let dispatchGroup = DispatchGroup()
+    private let dispatchGroup = DispatchGroup()
 
-    init(locationManager: LocationManager) {
-        self.locationManager = locationManager
+    func attachView(view: WeatherProtocol) {
+        weatherView = view
+        checkEEnvironmentXCodeKey()
         setLocationManager()
     }
 
-    func attachView(view: WeatherViewProtocol) {
-        weatherView = view
+    func repeatWeatherRequest(latitude: Double, longitude: Double) {
+        setWeatherRequest(latitude: latitude, longitude: longitude)
     }
 
-    func detachView() {
-        weatherView = nil
+}
+
+
+private extension WeatherPresenter {
+
+    func checkEEnvironmentXCodeKey() {
+        if ConstantsAPI.shared().weatherKeyAPI.isEmpty {
+            self.weatherView?.showApiKeyAlert()
+        }
     }
 
-    private func setLocationManager() {
+    func setLocationManager() {
         locationManager.setLocationManager()
         locationManager.$currentLocation
             .sink { [weak self] location in
@@ -56,8 +60,10 @@ class WeatherPresenter {
                       let location = location else {
                     return
                 }
-                self.setWeatherRequest(latitude: "\(location.coordinate.latitude)", longitude: "\(location.coordinate.longitude)")
-                
+                DispatchQueue.main.async {
+                    self.setWeatherRequest(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+                }
+
             }
             .store(in: &cancellable)
 
@@ -68,44 +74,43 @@ class WeatherPresenter {
                     return
                 }
                 if !isDetermined {
-                    self.setWeatherRequest(latitude: self.defaultWeatherModel.latitude, longitude: self.defaultWeatherModel.longitude)
+                    self.setWeatherRequest(latitude: AppConstants.shared().defaultLatitude, longitude: AppConstants.shared().defaultLongitude)
                     self.weatherView?.showInfoAlert()
                 }
             }
             .store(in: &cancellable)
     }
 
-    func setWeatherRequest(latitude: String, longitude: String) {
+    func setWeatherRequest(latitude: Double, longitude: Double) {
         weatherRequestFactory = factory.makeAuthRequestFactory()
         dispatchGroup.enter()
-        weatherRequestFactory?.getWeather(latitude: latitude, longitude: longitude, completion: { model, error in
-            guard let model = model else {
-                self.weatherView?.showAPIError(latitude: latitude, longitude: longitude)
-                self.dispatchGroup.leave()
+        weatherRequestFactory?.getWeather(latitude: latitude, longitude: longitude, completion: { [weak self] model, error in
+            guard let self = self,
+                  let model = model,
+                  let locationValue = locationManager.getLocationValue() else {
+                self?.dispatchGroup.leave()
                 return
             }
-            var weatherWeakModel = [WeatherWeakModel]()
+            var parts = [WeatherPartModel]()
+            model.forecasts.forEach { forecast in
+                parts.append(WeatherPartModel(date: forecast.date,
+                                              temp_avg: forecast.parts.morning.temp_avg,
+                                              feels_like: forecast.parts.morning.feels_like,
+                                              wind_speed: forecast.parts.morning.wind_speed,
+                                              wind_gust: forecast.parts.morning.wind_gust))
+            }
 
-//            model.forecast.forEach { element in
-//                weatherWeakModel.append(WeatherWeakModel(date: element.date,
-//                                                         temp_avg: element.parts.morning.temp_avg,
-//                                                         feels_like: element.parts.morning.feels_like,
-//                                                         wind_speed: element.parts.morning.wind_speed,
-//                                                         wind_gust: element.parts.morning.wind_gust))
-//            }
+            let weatherModel = WeatherModel(country: locationValue.0,
+                                            city: locationValue.1,
+                                            parts: parts)
 
-//            self.weatherModel = WeatherModel(country: model.geoObject.country.name,
-//                                             province: model.geoObject.province.name,
-//                                             week: weatherWeakModel)
-
-
+            GlobalWeatherBuilder.shared().setWeatherModel(model: weatherModel)
             self.dispatchGroup.leave()
         })
 
         self.dispatchGroup.notify(queue: .main) {
-            guard let weatherModel = self.weatherModel else { return }
-            self.weatherView?.hideIndicator()
-            self.weatherView?.setModel(model: weatherModel)
+            guard let weatherModel = GlobalWeatherBuilder.shared().build() else { return }
+            self.weatherView?.setContentState(state: .contentViewState(model: weatherModel))
         }
     }
 

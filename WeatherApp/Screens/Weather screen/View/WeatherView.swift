@@ -8,16 +8,35 @@
 import UIKit
 import SnapKit
 
+
+// MARK: - Delegate
+protocol WeatherViewDelegate: AnyObject {
+    func tapOnSelf()
+}
+
+// MARK: - Protocol
+protocol WeatherViewProtocol: UIView {
+    var delegate: WeatherViewDelegate? { get set }
+    func changeContentState(state: WeatherViewScreenType)
+}
+
+// MARK: - View
 class WeatherView: UIView {
 
-    // MARK: - Model
+    weak var delegate: WeatherViewDelegate?
+
+    // MARK: Model
     private var model: WeatherModel?
 
-    // MARK: - Managers
-    private var dateFormatterManager: DateFormatterManager?
-    private let factoryManager = FactoryManager()
+    // MARK: Managers
+    private var dateFormatterManager = DateFormatterManager.shared()
+
+    // MARK: Init view
+    private var state: WeatherViewScreenType
 
     // MARK: - UI
+    private(set) var activityIndicator: UIActivityIndicatorView?
+
     private(set) lazy var localLabel: UILabel = {
         var label = UILabel()
         label.numberOfLines = 0
@@ -76,28 +95,64 @@ class WeatherView: UIView {
         return label
     }()
 
-    lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: CollectionViewLayout().createCollectionViewLayout(leading: 20, trailing: 20, height: 200, width: UIScreen.main.bounds.width/3, spacing: 8))
-        collectionView.register(SmallerWeatherCollectionViewCell.self, forCellWithReuseIdentifier: String(describing: SmallerWeatherCollectionViewCell.self))
-        collectionView.backgroundColor = .clear
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.alwaysBounceVertical = false
-        return collectionView
+    private var collectionView: MainCardsCollectionViewProtocol?
 
+    private(set) lazy var gitHubPlugView: GithubPlugViewProtocol = {
+        let view = GithubPlugView()
+        view.delegate = self
+        return view
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupUI()
+    init(state: WeatherViewScreenType) {
+        self.state = state
+        super.init(frame: .zero)
+        self.backgroundColor = .backgroundColor
+        changeContentState(state: .activityIndicatorState)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
 
-    private func setupUI() {
+// MARK: - View Protocol
+extension WeatherView: WeatherViewProtocol {
+    func changeContentState(state: WeatherViewScreenType) {
+        switch state {
+        case .activityIndicatorState:
+            setActivityIndicator(show: true)
+        case .contentViewState(let model):
+            setActivityIndicator(show: false)
+            setupUI(model: model)
+            setupData(model: model, index: 0)
+        case .linkToGithubRepository:
+            setActivityIndicator(show: false)
+            setupGithubView()
+        }
+    }
+}
+
+// MARK: - Private extension
+private extension WeatherView {
+    func setActivityIndicator(show: Bool) {
+        if show {
+            if activityIndicator == nil {
+                activityIndicator = UIActivityIndicatorView()
+                guard let activityIndicator = activityIndicator else { return }
+                activityIndicator.style = .large
+                activityIndicator.isHidden = false
+                activityIndicator.color = .gray
+                activityIndicator.startAnimating()
+                self.addSubview(activityIndicator)
+                activityIndicator.snp.makeConstraints {$0.center.equalToSuperview()}
+            }
+        } else {
+            activityIndicator?.removeFromSuperview()
+            activityIndicator = nil
+        }
+    }
+
+    func setupUI(model: WeatherModel) {
         self.backgroundColor = .backgroundColor
 
         // localLabel
@@ -154,6 +209,9 @@ class WeatherView: UIView {
         }
 
         // collection
+        collectionView = MainCardsCollectionView(model: model)
+        guard let collectionView = collectionView else { return }
+        collectionView.mainCardsDelegate = self
         self.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(blueRectangleView.snp.bottom).offset(20)
@@ -161,57 +219,32 @@ class WeatherView: UIView {
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview().inset(40)
         }
-
     }
 
-    func setData(model: WeatherModel, index: Int) {
-        self.model = model
-        localLabel.text = "\(model.province.uppercased()), \n\(model.country)"
-
-        dateFormatterManager = factoryManager.makeDateFormatterManager()
-        guard let dateFormatterManager = dateFormatterManager else { return }
-        dateLabel.text = dateFormatterManager.refactorDate(date: model.week[index].date, formatType: .fullDate)
-
-        tempLabel.text = "\(model.week[index].temp_avg) °C"
-
-        tempFeelsLabel.text = "Ощущаемая температура \(model.week[index].feels_like) °C"
-
-        windSpeedLabel.text = "Скорость ветра \(model.week[index].wind_speed) м/с"
-
-        windGustLabel.text = "Скорость порывов ветра \(model.week[index].wind_gust) м/с"
+    func setupGithubView() {
+        self.addSubview(gitHubPlugView)
+        gitHubPlugView.snp.makeConstraints { make in
+            make.leading.trailing.centerY.equalToSuperview()
+        }
     }
 }
 
-extension WeatherView: UICollectionViewDataSource, UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let model = model else { return 1 }
-        return model.week.count
+// MARK: - Github plug view Delegate
+extension WeatherView: GithubPlugViewDelegate {
+    func tapOnSelf() {
+        delegate?.tapOnSelf()
     }
+}
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: SmallerWeatherCollectionViewCell.self), for: indexPath) as? SmallerWeatherCollectionViewCell
-        guard let cell = cell,
-              let model = model else { return UICollectionViewCell() }
-        cell.setData(model: model.week[indexPath.row])
-        return cell
+// MARK: - Custom collection view Delegate
+extension WeatherView: MainCardsCollectionViewDelegate {
+    func setupData(model: WeatherModel, index: Int) {
+        self.model = model
+        localLabel.text = "\(model.city.uppercased()), \n\(model.country)"
+        dateLabel.text = dateFormatterManager.refactorDate(dateInString: model.parts[index].date, formatType: .fullDate)
+        tempLabel.text = "\(model.parts[index].temp_avg)" + " " + NSLocalizedString("degrees", comment: "")
+        tempFeelsLabel.text = String(format: NSLocalizedString("perceived_temperature", comment: ""), "\(model.parts[index].feels_like)")
+        windSpeedLabel.text = String(format: NSLocalizedString("wind_speed", comment: ""), "\(model.parts[index].wind_speed)")
+        windGustLabel.text = String(format: NSLocalizedString("speed_of_wind_gusts", comment: ""), "\(model.parts[index].wind_gust)")
     }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
-        guard  let model = model else { return }
-        setData(model: model, index: indexPath.row)
-
-        if let cell = collectionView.cellForItem(at: indexPath) as? SmallerWeatherCollectionViewCell {
-            cell.setSelectedCell()
-        }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? SmallerWeatherCollectionViewCell else {
-            return
-        }
-
-        cell.setDeselectedCell()
-    }
-
 }

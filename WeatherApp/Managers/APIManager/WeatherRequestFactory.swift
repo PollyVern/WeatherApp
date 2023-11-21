@@ -12,26 +12,30 @@ final class WeatherRequestFactory {
 
     private var sessionManager = Session()
 
-    public func getWeather(latitude: String, longitude: String, completion: @escaping (WeatherResponseModel?, AFError?) -> Void) {
-        let parameters: [String : Any] = [
-            "lat": latitude,
-            "lon": longitude,
-            "lang": "ru_RU"
-        ]
+    public func getWeather(latitude: Double, longitude: Double, completion: @escaping (WeatherResponseModel?, AFError?) -> Void) {
+        let parameters = JsonConverter.shared().convert(parameters: WeatherParameters(lat: "\(latitude)", lon: "\(longitude)", lang: ConstantsAPI.shared().langRu))
 
         let request = WeatherRequestRouter.getWeather(parameters: parameters)
-        sessionManager.request(request).responseDecodable(of: WeatherResponseModel.self) { response in
-            switch response.result {
-            case .success(let response):
-                print("?? response \(response)")
-                completion(response, nil)
-                return
-            case .failure(let error):
-                print("?? error \(error)")
-                completion(nil, error)
-                return
+        sessionManager.request(request).responseDecodable(of: WeatherResponseModel.self) { [weak self] response in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                switch response.result {
+                case .success(let response):
+                    completion(response, nil)
+                    return
+                case .failure(let error):
+                    if let statusCode = response.response?.statusCode {
+                        if statusCode == 403 {
+                            ConstantsUI.shared().navigationController?.showDefaultAlert(type: .maximumRequest, buttonAction: { [weak self] in
+                                guard let _ = self else { return }
+                            })
+                        }
+                    }
+                    completion(nil, error)
+                    return
+                }
             }
         }
-
     }
+
 }

@@ -7,13 +7,14 @@
 
 import Foundation
 
+
 struct WeatherModel {
     var country: String
-    var province: String
-    var week: [WeatherWeakModel]
+    var city: String
+    var parts: [WeatherPartModel]
 }
 
-struct WeatherWeakModel {
+struct WeatherPartModel {
     var date: String
     var temp_avg: Int
     var feels_like: Int

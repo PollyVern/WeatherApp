@@ -51,8 +51,8 @@
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "weatherKeyAPI"
-            value = "dad26baa-1119-4514-8e06-25ad0c1f5c1d"
+            key = "weather_key_API"
+            value = "a220789f-d90b-489f-8808-a27db31a3549"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

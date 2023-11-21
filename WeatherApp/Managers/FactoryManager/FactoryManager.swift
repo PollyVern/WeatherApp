@@ -11,15 +11,15 @@ import CoreLocation
 
 class FactoryManager {
 
-    private var locationManager: CLLocationManager?
+    private var defaultLocationManager: CLLocationManager?
     private var dateFormatterManager: DateFormatterManager?
 
-    func makeLocationManager() -> CLLocationManager {
-        if let factory = locationManager {
+    func makeDefaultLocationManager() -> CLLocationManager {
+        if let factory = defaultLocationManager {
             return factory
         } else {
             let factory = CLLocationManager()
-            locationManager = factory
+            defaultLocationManager = factory
             return factory
         }
     }

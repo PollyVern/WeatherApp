@@ -7,19 +7,26 @@
 
 import UIKit
 
-final class CollectionViewLayout {
+class CollectionViewLayoutManager {
 
-    public func createCollectionViewLayout(leading: CGFloat, trailing: CGFloat, height: CGFloat, width: CGFloat, spacing: CGFloat) -> UICollectionViewLayout {
+    private static let sharedInstance = CollectionViewLayoutManager()
+
+    public static func shared() -> CollectionViewLayoutManager {
+        return sharedInstance
+    }
+
+    func createCollectionViewLayout(leading: CGFloat, trailing: CGFloat, height: CGFloat, width: CGFloat, spacing: CGFloat) -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
             return self.createWeatherCollectionViewLayout(leading: leading, trailing: trailing, height: height, width: width, spacing: spacing)
         }
         return layout
     }
+
 }
 
-extension CollectionViewLayout {
+private extension CollectionViewLayoutManager {
 
-    private func createWeatherCollectionViewLayout(leading: CGFloat, trailing: CGFloat, height: CGFloat, width: CGFloat, spacing: CGFloat) -> NSCollectionLayoutSection {
+    func createWeatherCollectionViewLayout(leading: CGFloat, trailing: CGFloat, height: CGFloat, width: CGFloat, spacing: CGFloat) -> NSCollectionLayoutSection {
 
         let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(width), heightDimension: .absolute(height))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)

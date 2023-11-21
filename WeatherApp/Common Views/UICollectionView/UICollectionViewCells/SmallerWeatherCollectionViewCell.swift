@@ -8,13 +8,14 @@
 import UIKit
 import SnapKit
 
+protocol SmallerWeatherCollectionViewProtocol: UICollectionViewCell {
+    func setData(model: WeatherPartModel)
+    func deselectedCell()
+    func selectedCell()
+}
+
 class SmallerWeatherCollectionViewCell: UICollectionViewCell {
 
-    // MARK: - Managers
-    private var dateFormatterManager: DateFormatterManager?
-    private let factoryManager = FactoryManager()
-
-    // MARK: - UI
     private let background: UIView = {
         let view = UIView()
         view.backgroundColor = .darkBlueColor
@@ -43,8 +44,10 @@ class SmallerWeatherCollectionViewCell: UICollectionViewCell {
         setupUI()
     }
 
-    private func setupUI() {
+}
 
+private extension SmallerWeatherCollectionViewCell {
+    func setupUI() {
         // background
         self.addSubview(background)
         background.snp.makeConstraints { make in
@@ -63,26 +66,23 @@ class SmallerWeatherCollectionViewCell: UICollectionViewCell {
         tempLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
+    }
+}
 
+extension SmallerWeatherCollectionViewCell: SmallerWeatherCollectionViewProtocol {
+
+    func setData(model: WeatherPartModel) {
+        dateLabel.text = DateFormatterManager.shared().refactorDate(dateInString: model.date, formatType: .dateWithoutYear)
+        tempLabel.text =  "\(model.temp_avg)" + " " + NSLocalizedString("degrees", comment: "")
     }
 
-    func setData(model: WeatherWeakModel) {
-        dateFormatterManager = factoryManager.makeDateFormatterManager()
-        guard let dateFormatterManager = dateFormatterManager else { return }
-        dateLabel.text = dateFormatterManager.refactorDate(date: model.date, formatType: .dateWithoutYear)
-
-        tempLabel.text = "\(model.temp_avg) °C"
-        
-    }
-
-    func setSelectedCell() {
-        background.layer.borderWidth = 3.0
-        background.layer.borderColor = UIColor.lightBlueColor.cgColor
-    }
-
-    func setDeselectedCell() {
+    func deselectedCell() {
         background.layer.borderWidth = 0.0
         background.layer.borderColor = UIColor.clear.cgColor
     }
 
+    func selectedCell() {
+        background.layer.borderWidth = 3.0
+        background.layer.borderColor = UIColor.lightBlueColor.cgColor
+    }
 }
