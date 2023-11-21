@@ -72,21 +72,21 @@ private extension LocationManager {
         case .authorizedAlways, .authorizedWhenInUse:
             defaultLocationManager.startUpdatingLocation()
             isDetermined = true
-            print("❖ authorizationStatus: authorizedAlways")
+            print("❖ LocationManager authorizationStatus: authorizedAlways")
         case .denied:
-            print("❖ authorizationStatus: denied")
+            print("❖ LocationManager authorizationStatus: denied")
             isDetermined = false
             setCountryAndCity()
         case .notDetermined:
             defaultLocationManager.requestWhenInUseAuthorization()
             isDetermined = nil
-            print("❖ authorizationStatus: notDetermined")
+            print("❖ LocationManager authorizationStatus: notDetermined")
         case .restricted:
             isDetermined = true
-            print("❖ authorizationStatus: restricted")
+            print("❖ LocationManager authorizationStatus: restricted")
         @unknown default:
             isDetermined = false
-            print("❖ authorizationStatus: default")
+            print("❖ LocationManager authorizationStatus: default")
         }
     }
 

@@ -16,17 +16,16 @@ class ConstantsAPI {
     }
 
     // MARK: Parameters
-    let weatherKeyAPI = ProcessInfo.processInfo.environment["weatherKeyAPI"] ?? ""
+    let weatherKeyAPI = ProcessInfo.processInfo.environment["weather_key_API"] ?? ""
     let yandexApiHeader = "X-Yandex-API-Key"
 
     // MARK: URL strings
     let baseUrlString = "https://api.weather.yandex.ru/v2"
-    let informersUrlString = "/informers"
+    let informersUrlString = "/forecast"
 
     // MARK: Request parameters
     let lat = "lat"
     let lon = "lon"
     let lang = "lang"
     let langRu = "ru_RU"
-
 }

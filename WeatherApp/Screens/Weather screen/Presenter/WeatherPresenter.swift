@@ -92,16 +92,18 @@ private extension WeatherPresenter {
                 return
             }
             var parts = [WeatherPartModel]()
-            model.forecast.parts.forEach { part in
-                parts.append(WeatherPartModel(temp_avg: part.temp_avg,
-                                              feels_like: part.feels_like,
-                                              wind_speed: part.wind_speed,
-                                              wind_gust: part.wind_gust))
+            model.forecasts.forEach { forecast in
+                parts.append(WeatherPartModel(date: forecast.date,
+                                              temp_avg: forecast.parts.morning.temp_avg,
+                                              feels_like: forecast.parts.morning.feels_like,
+                                              wind_speed: forecast.parts.morning.wind_speed,
+                                              wind_gust: forecast.parts.morning.wind_gust))
             }
+
             let weatherModel = WeatherModel(country: locationValue.0,
                                             city: locationValue.1,
-                                            date: model.forecast.date,
                                             parts: parts)
+
             GlobalWeatherBuilder.shared().setWeatherModel(model: weatherModel)
             self.dispatchGroup.leave()
         })

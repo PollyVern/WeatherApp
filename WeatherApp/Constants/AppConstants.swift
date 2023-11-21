@@ -18,4 +18,6 @@ class AppConstants {
     let defaultLatitude: Double = 48.8534 // Paris
     let defaultLongitude: Double = 2.3488 // Paris
 
+    let localeIdentifier = Locale.preferredLanguages[0]
+
 }

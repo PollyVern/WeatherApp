@@ -19,7 +19,7 @@ enum FormatterSetType {
         case .dateWithoutYear:
             return "dd MMMM"
         case .getApiDate:
-            return "yyyy-mm-dd"
+            return "yyyy-MM-dd"
         }
     }
 }

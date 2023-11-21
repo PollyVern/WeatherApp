@@ -12,24 +12,21 @@ class DateFormatterManager {
 
     private static let sharedInstance = DateFormatterManager()
 
-    private let localeIdentifier = "RU"
-
     public static func shared() -> DateFormatterManager {
         return sharedInstance
     }
 
-    func refactorDate(date: String, formatType: FormatterSetType) -> String? {
+    func refactorDate(dateInString: String, formatType: FormatterSetType) -> String? {
         let dateFormatterGet = DateFormatter()
         dateFormatterGet.dateFormat = FormatterSetType.getApiDate.format
 
-        let dateFormatterSet = DateFormatter()
-        dateFormatterSet.locale = Locale(identifier: localeIdentifier)
-        dateFormatterSet.dateFormat = formatType.format
+        if let date = dateFormatterGet.date(from: dateInString) {
+            let dateFormatterSet = DateFormatter()
+            dateFormatterSet.dateFormat = formatType.format
 
-        if let date = dateFormatterGet.date(from: date) {
+            dateFormatterSet.locale = Locale(identifier: AppConstants.shared().localeIdentifier)
             return dateFormatterSet.string(from: date)
-        } else {
-            return nil
         }
+        return nil
     }
 }

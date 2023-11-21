@@ -12,14 +12,8 @@ final class WeatherRequestFactory {
 
     private var sessionManager = Session()
 
-    private let constantsAPI = ConstantsAPI.shared()
-
     public func getWeather(latitude: Double, longitude: Double, completion: @escaping (WeatherResponseModel?, AFError?) -> Void) {
-        let parameters: [String : Any] = [
-            constantsAPI.lat: "\(latitude)",
-            constantsAPI.lon: "\(longitude)",
-            constantsAPI.lang: constantsAPI.langRu
-        ]
+        let parameters = JsonConverter.shared().convert(parameters: WeatherParameters(lat: "\(latitude)", lon: "\(longitude)", lang: ConstantsAPI.shared().langRu))
 
         let request = WeatherRequestRouter.getWeather(parameters: parameters)
         sessionManager.request(request).responseDecodable(of: WeatherResponseModel.self) { [weak self] response in
@@ -27,7 +21,6 @@ final class WeatherRequestFactory {
             DispatchQueue.main.async {
                 switch response.result {
                 case .success(let response):
-                    print("?? 1")
                     completion(response, nil)
                     return
                 case .failure(let error):
