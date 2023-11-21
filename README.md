@@ -16,7 +16,7 @@
 Create an API key and put it in an Xcode environment variable. Specifically:
 
 1. Get the key from https://yandex.ru/dev/weather/
-2. In the developer cabinet, change the "Test" tariff to "Weather on your site", as the APIs on these tariffs are different  
+2. Activate "Test" tariff for api weather
 
 3. Go to `Xcode` -> `Edit Scheme...` -> ...
 <img src="https://github.com/PollyVern/WeatherApp/blob/master/ReadmeResources/stepOne.png" width="200">
