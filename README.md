@@ -4,7 +4,7 @@
 
 ☑ API requests made on **Alamofire** networking layer
 
-☑ **Singlton, Factory, Builder** patterns used
+☑ **Singleton, Factory, Builder** patterns used
 
 ☑ **MVP** architecture based on delegates and protocols
 
@@ -16,7 +16,7 @@
 Create an API key and put it in an Xcode environment variable. Specifically:
 
 1. Get the key from https://yandex.ru/dev/weather/
-2. Activate "Test" tariff for api weather
+2. Activate "Test" tariff in api weather
 
 3. Go to `Xcode` -> `Edit Scheme...` -> ...
 <img src="https://github.com/PollyVern/WeatherApp/blob/master/ReadmeResources/stepOne.png" width="200">
