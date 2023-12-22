@@ -26,3 +26,6 @@ Create an API key and put it in an Xcode environment variable. Specifically:
 <img src="https://github.com/PollyVern/WeatherApp/blob/master/ReadmeResources/stepSecond.png" width="700">
 
 And create an environment variable named `weather_key_API`. Insert the API key into the value.
+
+# Liked the project?
+Tap to star ⭐️ and spread the word!
